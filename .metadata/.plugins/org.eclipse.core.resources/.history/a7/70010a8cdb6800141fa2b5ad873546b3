@@ -1,0 +1,113 @@
+package guay.philippe.capstone.player.repository;
+
+import guay.philippe.capstone.completedquiz.repository.CompletedQuiz;
+import guay.philippe.capstone.quiz.repository.Quiz;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.google.common.base.Objects;
+
+public class Player {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+	
+	private String username;
+	private String passwordHash;
+	private Date creationTime;
+	private int score;
+	private ArrayList<CompletedQuiz> completedQuizzes;
+	
+	public Player() {
+	}
+	
+	public Player(String username, String passwordHash) {
+		super();
+		this.username = username;
+		this.passwordHash = passwordHash;
+		this.completedQuizzes = new ArrayList<CompletedQuiz>();
+	}
+	
+	public String getUsername(){
+		return username;
+	}
+	
+	public String getPasswordHash(){
+		return passwordHash;
+	}
+	
+	public Date getCreationTime(){
+		return creationTime;
+	}
+	
+	
+	public int getScore(){
+		return score;
+	}
+	
+	public long getId() {
+		return id;
+	}
+	
+	public ArrayList<CompletedQuiz> getCompletedQuizzes(){
+		return completedQuizzes;
+	}
+	
+	public void setUsername(String uname){
+		this.username = uname;
+	}
+	
+	public void setPasswordHash(String hash){
+		this.username = hash;
+	}
+	
+	public void setCreationTime(Date creationTime){
+		this.creationTime = creationTime;
+	}
+	
+	
+	
+	
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	/**
+	 * Two Videos will generate the same hashcode if they have exactly the same
+	 * values for their name, author, and creation_time.
+	 * 
+	 */
+	@Override
+	public int hashCode() {
+		// Google Guava provides great utilities for hashing
+		return Objects.hashCode(username,creationTime, passwordHash);
+	}
+
+	/**
+	 * Two Videos are considered equal if they have exactly the same values for
+	 * their name, url, and duration.
+	 * 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Player) {
+			Player other = (Player) obj;
+			// Google Guava provides great utilities for equals too!
+			return Objects.equal(username, other.username)
+					&& Objects.equal(creationTime, other.creationTime)
+					&& Objects.equal(passwordHash, other.passwordHash);
+		} else {
+			return false;
+		}
+	}
+
+	
+}
+

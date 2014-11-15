@@ -1,0 +1,370 @@
+package guay.philippe.capstone;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.FragmentManager;
+import android.app.ActionBar;
+import android.app.Activity;
+android.app.ListActivity
+import android.app.ActionBar.Tab;
+//import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import fragments.CompletedQuizFragment;
+import fragments.CreatedQuizFragment;
+
+
+public class HomePageActivity extends FragmentActivity implements ActionBar.TabListener, IApiAccessResponse {
+	
+	private ViewPager mViewPager;
+	private static Bundle mNewQuizArgs = new Bundle();
+    private AppSectionsPagerAdapter mAppSectionsPagerAdapter;
+	
+    @Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_home_page);
+		
+		// Get the new Quizzes. Fetched via an async task
+        GetNewQuizTask authObj = new GetNewQuizTask();
+    	authObj.delegate = this;
+		authObj.execute();
+		
+		
+		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+        
+		final ActionBar actionBar = getActionBar();
+		actionBar.setHomeButtonEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);	
+		
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // When swiping between different app sections, select the corresponding tab.
+                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+                // Tab.
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+        
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by the adapter.
+            // Also specify this Activity object, which implements the TabListener interface, as the
+            // listener for when this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+        
+//        setContentView(mViewPager);
+		
+//		
+//		mTabsAdapter = new TabsAdapter(this, mViewPager);
+//        mTabsAdapter.addTab(bar.newTab().setText("New Quiz"),
+//	                NewQuizFragment.class, null);
+//        mTabsAdapter.addTab(bar.newTab().setText("Quiz History"),
+//                CompletedQuizFragment.class, null);
+//        mTabsAdapter.addTab(bar.newTab().setText("Create Quiz"),
+//	                CreatedQuizFragment.class, null);
+//        if (savedInstanceState != null) {
+//            bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+//        }
+	}
+    
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+    
+    public static class AppSectionsPagerAdapter  extends FragmentPagerAdapter {
+//        private final Context mContext;
+//        private final ActionBar mActionBar;
+//        private final ViewPager mViewPager;
+//        private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>(); 
+    	
+        public AppSectionsPagerAdapter(android.support.v4.app.FragmentManager fm) {
+            super(fm);
+        }
+        
+        @Override
+        public Fragment getItem(int i) {
+            switch (i) {
+                case 0:
+                    // The first section of the app is the most interesting -- it offers
+                    // a launchpad into the other demonstrations in this example application.
+                	Fragment fragmentNew = new Fragment(){
+                		public static final String ARG_SECTION_NUMBER = "section_number";
+                		private ListView mListView;
+                 	   @Override
+                 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                 	            Bundle savedInstanceState) {
+                 		  View rootView = inflater.inflate(R.layout.fragment_new_quiz, container, false);
+                 	        Bundle args = getArguments();
+                 	        String jsonStr = args.getString("ARGS");
+                 	        JSONArray json_arr = null;
+                 			try {
+                 				json_arr = new JSONArray(jsonStr);
+                 			} catch (JSONException e) {
+                 				// TODO Auto-generated catch block
+                 				e.printStackTrace();
+                 			}
+                 	        
+                 	        ArrayList<JSONObject> array_list = new ArrayList<JSONObject>();      
+                 	        if (json_arr != null) { 
+                 	           int len = json_arr.length();
+                 	           for (int i=0;i<len;i++){ 
+                 	            try {
+                 					array_list.add((JSONObject) json_arr.get(i));
+                 				} catch (JSONException e) {
+                 					// TODO Auto-generated catch block
+                 					e.printStackTrace();
+                 				}
+                 	           } 
+                 	        } 
+//                 	        GetNewQuizTask authObj = new GetNewQuizTask();
+//                 	    	authObj.delegate = this;
+//                 			authObj.execute();
+                 	        
+                 	        mListView = (ListView) getActivity().findViewById(R.id.new_quiz_list);
+                 			 QuizAdapter arrayAdapter = new QuizAdapter(
+                 	                getActivity(),
+                 	                R.layout.newquiz_item,
+                 	                array_list);
+//                 			 mListView.setAdapter(arrayAdapter);
+                 			 
+                 			((ListActivity) getActivity()).setListAdapter(arrayAdapter);
+                 			
+                 	        return rootView;
+                 	    }
+                 	   
+                 	    class QuizAdapter extends ArrayAdapter<JSONObject>{
+                 		  public View v;
+                 			  
+                 		  public QuizAdapter(Context context){  
+                 	        super(context, R.layout.newquiz_item);
+                 		  }
+                 		  
+                 		  
+                 		  public QuizAdapter(Activity activity, int newquizItem,
+                 				ArrayList<JSONObject> array_list) {
+                 			  super(activity, newquizItem, array_list);
+                 		  }
+
+                 		  @Override 
+                 			 public View getView(int position, View convertView, ViewGroup parent ) {
+                 				 if (convertView == null) {
+                 				        LayoutInflater vi = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                 				        convertView = vi.inflate(R.layout.newquiz_item, null);
+                 			    }
+                 				
+                 				 TextView tv = (TextView) convertView.findViewById(R.id.text1);
+                 				 TextView tv2 = (TextView) convertView.findViewById(R.id.text2);
+                 				 tv.setText("Test");
+                 				 tv2.setText("Test2");
+                 				 
+                 				return convertView;
+                 				 
+                 			 }
+                 		}
+                	};
+//                    Bundle argsNew = new Bundle();
+//                    argsNew.putInt(NewQuizFragment.ARG_SECTION_NUMBER, i + 1);
+                    fragmentNew.setArguments(mNewQuizArgs);
+                    return fragmentNew;
+                    
+                case 1:
+                	Fragment fragmentComp = new Fragment(){
+                		public static final String ARG_SECTION_NUMBER = "section_number";
+                 	   @Override
+                 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                 	            Bundle savedInstanceState) {
+                 	 
+                 	        View rootView = inflater.inflate(R.layout.fragment_completed_quiz, container, false);
+                 	         
+                 	        return rootView;
+                 	    }
+                	};
+                	
+                    Bundle argsComp = new Bundle();
+                    argsComp.putInt(CompletedQuizFragment.ARG_SECTION_NUMBER, i + 1);
+                    fragmentComp.setArguments(argsComp);
+                    return fragmentComp;
+                case 2:
+                	Fragment fragmentCreate = new Fragment(){
+                		public static final String ARG_SECTION_NUMBER = "section_number";
+                 	   @Override
+                 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                 	            Bundle savedInstanceState) {
+                 	 
+                 	        View rootView = inflater.inflate(R.layout.fragment_created_quiz, container, false);
+                 	         
+                 	        return rootView;
+                 	    }
+                	};
+                	Bundle argsCreate = new Bundle();
+                	argsCreate.putInt(CreatedQuizFragment.ARG_SECTION_NUMBER, i + 1);
+                    fragmentCreate.setArguments(argsCreate);
+                    return fragmentCreate;
+                default:
+                    // The other sections of the app are dummy placeholders.
+                	Fragment fragmentComplete = new Fragment(){
+                		public static final String ARG_SECTION_NUMBER = "section_number";
+                 	   @Override
+                 	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                 	            Bundle savedInstanceState) {
+                 	 
+                 	        View rootView = inflater.inflate(R.layout.fragment_created_quiz, container, false);
+                 	         
+                 	        return rootView;
+                 	    }
+                	};
+                    Bundle argsComplete = new Bundle();
+                    argsComplete.putInt(CompletedQuizFragment.ARG_SECTION_NUMBER, i + 1);
+                    fragmentComplete.setArguments(argsComplete);
+                    return fragmentComplete;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Section " + (position + 1);
+        }
+        
+        
+//    	static final class TabInfo {
+//             private final Class<?> clss;
+//             private final Bundle args;
+//
+//             TabInfo(Class<?> _class, Bundle _args) {
+//                 clss = _class;
+//                 args = _args;
+//             }
+//        }
+//    	
+//        public TabsAdapter(FragmentActivity activity, ViewPager pager) {
+//        	super(activity.getSupportFragmentManager());
+//            mContext = activity;
+//            mActionBar = activity.getActionBar();
+//            mViewPager = pager;
+//            mViewPager.setAdapter(this);
+//            mViewPager.setOnPageChangeListener(this);
+//        }
+//        
+//        public void addTab(ActionBar.Tab tab, Class clss, Bundle args) {
+//            TabInfo info = new TabInfo(clss, args);
+//            tab.setTag(info);
+//            tab.setTabListener(this);
+//            mTabs.add(info);
+//            mActionBar.addTab(tab);
+//            notifyDataSetChanged();
+//        }
+//        
+//     
+//        @Override
+//        public Fragment getItem(int position) {
+//            TabInfo info = (TabInfo) mTabs.get(position);
+//            return Fragment.instantiate(mContext, info.clss.getName(), info.args);
+//        }
+//     
+//        @Override
+//        public int getCount() {
+//            // get item count - equal to number of tabs
+//            return mTabs.size();
+//        }
+//        @Override
+//        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//        }
+//
+//        @Override
+//        public void onPageSelected(int position) {
+//            mActionBar.setSelectedNavigationItem(position);
+//        }
+//
+//        @Override
+//        public void onPageScrollStateChanged(int state) {
+//        }
+//
+//        @Override
+//        public void onTabSelected(Tab tab, FragmentTransaction ft) {
+//            Object tag = tab.getTag();
+//            for (int i=0; i<mTabs.size(); i++) {
+//                if (mTabs.get(i) == tag) {
+//                    mViewPager.setCurrentItem(i);
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+//        }
+//
+//        @Override
+//        public void onTabReselected(Tab tab, FragmentTransaction ft) {
+//        }
+     
+    }
+
+    @Override
+	public void postResult(JSONObject[] jsonObjects) {
+    	List<JSONObject> array_list = new ArrayList<JSONObject>();
+		 if(jsonObjects != null) {
+			 for(int i=0; i< jsonObjects.length; i++){
+				 array_list.add(jsonObjects[i]);
+			 }
+		 }
+		 mNewQuizArgs.putString("ARGS", array_list.toString());
+	}
+
+	@Override
+	public void postResult(Boolean result) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
+//    }
+}
+
+
+

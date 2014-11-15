@@ -1,0 +1,154 @@
+package guay.philippe.capstone;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.*;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class LoginActivity extends ActionBarActivity {
+	private TextView mLoginResult;
+	private Boolean mRes;
+	
+	private void postLoginData() {
+       
+        try {
+            // Add user name and password
+        	TextView uname = (TextView) findViewById(R.id.username);
+        	String username = uname.getText().toString();
+        	
+        	TextView pword = (TextView) findViewById(R.id.password);
+        	String password = pword.getText().toString();
+          
+            new AuthenticateTask().execute(username, password);
+           
+            if(mRes)
+            {
+             Log.w("MUTIBO", "TRUE");
+             mLoginResult.setText("Login successful");   
+            }else
+            {
+             Log.w("MUTIBO", "FALSE");
+             mLoginResult.setText(mRes.toString());             
+            }
+    } 
+	
+	private StringBuilder inputStreamToString(InputStream is) {
+	     String line = "";
+	     StringBuilder total = new StringBuilder();
+	     // Wrap a BufferedReader around the InputStream
+	     BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	     // Read response until the end
+	     try {
+	      while ((line = rd.readLine()) != null) { 
+	        total.append(line); 
+	      }
+	     } catch (IOException e) {
+	      e.printStackTrace();
+	     }
+	     // Return full string
+	     return total;
+    }
+	private class AuthenticateTask extends AsyncTask<List<NameValuePair>, Integer, Long> {
+		 // Create a new HttpClient and Post Header
+        HttpClient mHttpclient = new DefaultHttpClient();
+        HttpPost mHttppost = new HttpPost("http://localhost:8080/login");
+    	
+	     protected Boolean doInBackground(String... params) {
+	    	 try{
+	    		 
+	    		 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+         		 nameValuePairs.add(new BasicNameValuePair("username", params[0]));
+	             nameValuePairs.add(new BasicNameValuePair("password", params[1]));
+
+	    		 mHttppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		    	 
+	    		 Log.w("MUTIBO", "Execute HTTP Post Request");
+	             HttpResponse response = mHttpclient.execute(mHttppost);
+	              
+	             String str = inputStreamToString(response.getEntity().getContent()).toString();
+	             Log.w("MUTIBO", str);
+	             return str.toString().equalsIgnoreCase("true");
+	    	 } catch (ClientProtocolException e) {
+	    		 e.printStackTrace();
+	    		 return false;
+	    	 } catch (IOException e) {
+	    		 e.printStackTrace();
+	    		 return false;
+	    	 }
+	     }
+
+	     protected void onProgressUpdate(Integer... progress) {
+	         setProgress(progress[0]);
+	     }
+
+	     protected void onPostExecute(boolean result) {
+	    	 mRes = result;
+//	         showDialog("Downloaded " + result + " bytes");
+	     }
+	 }
+	 
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
+		
+		Button mLoginButton = (Button) findViewById(R.id.login_submit_button);
+		TextView mLoginResult = (TextView) findViewById(R.id.login_result);
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost("http://www.sencide.com/blog/login.php");
+		
+		mLoginButton.setOnClickListener(new Button.OnClickListener() {
+			
+			public void onClick(View v) {
+				postLoginData();
+				Intent homeIntent = new Intent(LoginActivity.this, HomePageActivity.class);
+				LoginActivity.this.startActivity(homeIntent);
+			}
+		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.login, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+}

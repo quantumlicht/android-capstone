@@ -1,0 +1,5 @@
+package guay.philippe.capstone.player.repository;
+
+public class PlayerRepository {
+
+}

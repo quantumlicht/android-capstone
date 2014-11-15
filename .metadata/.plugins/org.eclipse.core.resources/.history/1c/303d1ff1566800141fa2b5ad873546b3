@@ -1,0 +1,170 @@
+package fragments;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import guay.philippe.capstone.AuthenticateTask;
+import guay.philippe.capstone.GetNewQuizTask;
+import guay.philippe.capstone.HomePageActivity;
+import guay.philippe.capstone.IApiAccessResponse;
+import guay.philippe.capstone.LoginActivity;
+import guay.philippe.capstone.Quiz;
+import guay.philippe.capstone.R;
+import adapter.QuizAdapter;
+import android.app.Activity;
+//import android.app.ListFragment;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+public class NewQuizFragment extends ListFragment {
+	private ListView mListView;
+	private WeakReference<GetNewQuizTask> asyncTaskWeakRef;
+	private QuizAdapter mArrayAdapter;
+	List<Quiz> mItemList = new ArrayList<Quiz>();
+	public static final String ARG_SECTION_NUMBER = "section_number";
+	
+	public static ListFragment newInstance(String fragmentName) {
+	   ListFragment f =  new NewQuizFragment();
+	   
+	   Bundle args = new Bundle();
+       args.putString("name", fragmentName);
+       f.setArguments(args);
+       return f;
+	}
+	
+	@Override 
+	public void onCreate(Bundle savedInstanceState){
+	      super.onCreate(savedInstanceState);
+	        setRetainInstance(true);
+	        startNewAsyncTask();
+	}
+	
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        View rootView = inflater.inflate(R.layout.fragment_new_quiz, container, false); 
+        Log.d("MUTIBO", "NewQuizFragment::onCreateView Setting up QuizAdapter");
+        mListView = (ListView) getActivity().findViewById(R.id.list);
+		mArrayAdapter = new QuizAdapter(mItemList, getActivity());
+		Log.d("MUTIBO", "NewQuizFragment::onCreateView Instantiated adapter");
+		setListAdapter(mArrayAdapter);
+		Log.d("MUTIBO", "NewQuizFragment::onCreateView set ListAdapter");
+        return rootView;
+    }
+	
+	@Override 
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		 Quiz q = getListView().getItemAtPosition(position);
+	}
+   
+	private void startNewAsyncTask() {
+		GetNewQuizTask asyncTask = new GetNewQuizTask(this);
+	    this.asyncTaskWeakRef = new WeakReference<GetNewQuizTask >(asyncTask);
+	    Log.d("MUTIBO", "NewQuizFragment::startNewAsyncTask executing task");
+	    asyncTask.execute();
+	}
+	
+	private class GetNewQuizTask extends AsyncTask<String, Void, List<Quiz>> {
+		private WeakReference<NewQuizFragment> fragmentWeakRef;
+		
+		 private GetNewQuizTask (NewQuizFragment fragment) {
+	            this.fragmentWeakRef = new WeakReference<NewQuizFragment>(fragment);
+        }
+		
+		@Override
+		protected List<Quiz> doInBackground(String... params) {
+			List<Quiz> result = new ArrayList<Quiz>();
+			try{
+				Log.d("MUTIBO", "execution Quiz GET request");
+				URL u;
+				u = new URL("http://10.0.2.2:8080/quiz");
+				HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+	            conn.setRequestMethod("GET");
+	            conn.connect();
+	            Log.d("MUTIBO", "NewQuizFragment::GetNewQuizTask Gettting Connection");
+	            InputStream is = conn.getInputStream();
+	            // Read the stream
+	            byte[] b = new byte[1024];
+	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            while ( is.read(b) != -1)
+	            baos.write(b);
+	            
+	            String JSONResp = new String(baos.toByteArray());
+	            JSONArray arr = new JSONArray(JSONResp);
+	            
+	            for (int i=0; i < arr.length(); i++) {
+	                result.add(convertQuiz(arr.getJSONObject(i)));
+	            }
+	            Log.d("MUTIBO", "NewQuizFragment::GetNewQuizTask Returning result->" + result.toString());
+	            conn.disconnect();
+	        	return result;
+			}
+			catch (Throwable t){
+				t.printStackTrace();
+			}
+			finally {
+				Log.d("MUTIBO", "Finally Block");
+				return result;
+			}
+
+		}
+		
+		@Override
+		protected void onPostExecute(List<Quiz> result) {
+			super.onPostExecute(result);
+			if (this.fragmentWeakRef.get() != null) {	
+				mArrayAdapter.setItemList(result);
+			
+				Log.d("MUTIBO", "NewQuizFragment::onPostExecute");
+				mArrayAdapter.notifyDataSetChanged();
+			}
+		}
+
+		
+		
+	}
+	private Quiz convertQuiz(JSONObject obj) throws JSONException {
+		 Log.d("MUTIBO", "NewQuizFragment::convertQuiz");
+         String name = obj.getString("name");
+         int rating = obj.getInt("rating");
+         
+         ArrayList<String> movieSet = new ArrayList<String>();
+         JSONArray movieObj = obj.getJSONArray("movieSet");
+
+         for (int i=0; i< movieObj.length(); i++){
+            movieSet.add(movieObj.getString(i));
+         }
+         
+         String justification = obj.getString("justification");
+         int unrelatedMovie = obj.getInt("unrelatedMovie");
+
+         return new Quiz(name, rating, justification, unrelatedMovie,movieSet);
+     }
+
+		
+}
+	

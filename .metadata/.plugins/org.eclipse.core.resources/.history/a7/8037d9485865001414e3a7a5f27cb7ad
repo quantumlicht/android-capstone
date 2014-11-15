@@ -1,0 +1,5 @@
+package guay.philippe.capstone.completedquiz.repository;
+
+public class CompletedQuizRepository {
+
+}

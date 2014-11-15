@@ -1,0 +1,58 @@
+package guay.philippe.capstone;
+
+import java.util.ArrayList;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Quiz implements Parcelable{
+	
+	private String name;
+	private int rating;
+	private String justification;
+	private int unrelatedMovie;
+	private String[] movieSet;
+	
+	public Quiz(String name, int rating, String justification, int unrelatedMovie, String[] movieSet){
+		this.name = name;
+		this.rating = rating;
+		this.justification = justification;
+		this.unrelatedMovie = unrelatedMovie;
+		this.movieSet = movieSet;
+	}
+	
+	public Quiz(Parcel in){
+		this.name = in.readString();
+		this.rating = in.readInt();
+		this.justification = in.readString();
+		this.unrelatedMovie = in.readInt();
+		this.movieSet = in.readStringArray(movieSet);
+	}
+	
+	public int getRating() {
+		return rating;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getUnrelatedMovie() {
+		return unrelatedMovie;
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(name);
+		dest.writeInt(rating);
+		dest.writeString(justification);
+		dest.writeInt(unrelatedMovie);
+		dest.writeStringArray(movieSet);
+	}
+}

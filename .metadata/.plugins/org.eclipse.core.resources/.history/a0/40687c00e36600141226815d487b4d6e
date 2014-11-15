@@ -1,0 +1,6 @@
+package guay.philippe.capstone;
+
+public interface IApiAccessResponse {
+
+	void postResult(Boolean asyncresult);
+}

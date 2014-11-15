@@ -1,0 +1,8 @@
+package guay.philippe.capstone;
+
+public class Quiz {
+	
+	public Quiz(String name, int rating, String justification, int unrelatedMovie, ArrayList<String> movieSet){
+		
+	}
+}

@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+task-tag-projects-already-scanned=appcompat_v7,10-VideoServiceWithMongoDB,11-VideoServiceWithDynamoDB,11b-VideoServiceWithDynamoDBBeanstalk,12-VideoSvcAppEngineJDO,2-VideoServlet,3-VideoControllerAndRetrofit,4-VideoControllerWithDependencyInjection,5-VideoControllerWithJpa,6-VideoServiceWithDataRest,7-VideoServiceWithHttps,8-VideoServiceWithSpringSecurity,9-VideoServiceWithOauth2,Asgn1-VideoUp,Asgn2-VideoLike,capstone-server,capstone_client,MainActivity

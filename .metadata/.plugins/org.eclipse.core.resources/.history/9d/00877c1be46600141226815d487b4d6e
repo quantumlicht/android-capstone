@@ -1,0 +1,44 @@
+package fragments;
+import org.json.JSONObject;
+
+import guay.philippe.capstone.HomePageActivity;
+import guay.philippe.capstone.LoginActivity;
+import guay.philippe.capstone.R;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class NewQuizFragment extends Fragment, implements IApiAccessResponse {
+
+   @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        View rootView = inflater.inflate(R.layout.fragment_new_quiz, container, false);
+        
+        View listView = getActivity().findViewById(R.id.new_quiz_list);
+        
+        return rootView;
+    }
+   
+	@Override
+	public void postResult(Boolean asyncresult){
+	     //This method will get call as soon as your AsyncTask is complete. asyncresult will be your result.
+		 Log.d("MUTIBO", "asyncresult " + asyncresult);
+		 
+		 if(asyncresult){
+       	Log.d("MUTIBO", "TRUE");
+//       	mLoginResult.setText("Login successful");
+       	Intent homeIntent = new Intent(LoginActivity.this, HomePageActivity.class);
+			LoginActivity.this.startActivity(homeIntent);
+       }
+       else {
+       	Log.d("MUTIBO", "FALSE");
+       	mLoginResult.setText(asyncresult.toString());             
+       }
+	}
+}

@@ -1,0 +1,36 @@
+package fragments;
+import guay.philippe.capstone.R;
+import guay.philippe.capstone.HomePageActivity.ArrayListFragment;
+import adapter.QuizAdapter;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+
+public class CreatedQuizFragment extends ListFragment {
+	public static final String ARG_SECTION_NUMBER = "section_number";
+	private ListView mListView;
+	public static ListFragment newInstance(String fragmentName) {
+	   ListFragment f =  new CreatedQuizFragment();
+	   
+	   Bundle args = new Bundle();
+       args.putString("name", fragmentName);
+       f.setArguments(args);
+       return f;
+	}
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+ 
+        View rootView = inflater.inflate(R.layout.fragment_created_quiz, container, false);
+        mListView = (ListView) getActivity().findViewById(R.id.list);
+        mArrayAdapter = new QuizAdapter(mItemList, getActivity());
+		Log.d("MUTIBO", "NewQuizFragment::onCreateView Instantiated adapter");
+//		setListAdapter(mArrayAdapter);
+		setListAdapter(mArrayAdapter);
+        return rootView;
+    }
+}

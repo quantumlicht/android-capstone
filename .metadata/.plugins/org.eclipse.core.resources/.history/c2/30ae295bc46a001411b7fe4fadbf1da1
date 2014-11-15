@@ -1,0 +1,7 @@
+package guay.philippe.capstone;
+
+import android.os.Parcelable;
+
+public class Player implements Parcelable {
+	
+}

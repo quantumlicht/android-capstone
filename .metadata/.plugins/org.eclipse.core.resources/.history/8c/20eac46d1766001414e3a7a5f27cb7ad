@@ -1,0 +1,39 @@
+package guay.philippe.capstone.quiz;
+
+import java.util.Collection;
+
+import guay.philippe.capstone.quiz.repository.Quiz;
+import guay.philippe.capstone.quiz.repository.QuizRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.collect.Lists;
+
+@Controller
+public class QuizSvc {
+	
+	@Autowired
+	private QuizRepository quizzes;
+	
+	@RequestMapping(value="/go",method=RequestMethod.GET)
+	public @ResponseBody String goodLuck(){
+		return "Good Luck!";
+	}
+	
+	@RequestMapping(value="/quiz", method=RequestMethod.POST)
+	 	public @ResponseBody Quiz addQuiz(@RequestBody String name, @RequestBody String justification, @RequestBody int rating, @RequestBody int unrelatedMovie){
+			Quiz q = new Quiz(name, rating, justification, unrelatedMovie);
+		 	quizzes.save(q);
+		 	return q;
+	}
+	 
+	@RequestMapping(value="/quiz", method=RequestMethod.GET)
+	 public @ResponseBody Collection<Quiz> getQuizList(){
+			return Lists.newArrayList(quizzes.findAll());
+	}
+}
