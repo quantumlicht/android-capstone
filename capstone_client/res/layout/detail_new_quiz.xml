@@ -37,24 +37,28 @@
             android:id="@+id/new_quiz_movie1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="0"
             android:text="Button" />
 
         <Button
             android:id="@+id/new_quiz_movie2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="1"
             android:text="Button" />
 
         <Button
             android:id="@+id/new_quiz_movie3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:tag="2"
             android:text="Button" />
 
         <Button
             android:id="@+id/new_quiz_movie4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:tag="3"
             android:text="Button" />
 
     </LinearLayout>

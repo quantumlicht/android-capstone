@@ -8,6 +8,7 @@ import android.os.Parcelable;
 public class Quiz implements Parcelable{
 	
 	private String name;
+	private int id;
 	private int rating = 0;
 	private String justification;
 	private int unrelatedMovie;
@@ -32,6 +33,7 @@ public class Quiz implements Parcelable{
 		this.unrelatedMovie = in.readInt();
 		this.movieSet = in.createStringArrayList();
 		this.rating = in.readInt();
+		this.id = in.readInt();
 	}
 	
 	public int getRating() {
@@ -66,6 +68,10 @@ public class Quiz implements Parcelable{
 		this.authorId = authorId;
 	}
 	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public int getUnrelatedMovie() {
 		return unrelatedMovie;
 	}
@@ -84,6 +90,7 @@ public class Quiz implements Parcelable{
 		dest.writeInt(unrelatedMovie);
 		dest.writeStringList(movieSet);
 		dest.writeInt(rating);
+		dest.writeInt(id);
 	}
 	
 	public static final Parcelable.Creator<Quiz> CREATOR = new Parcelable.Creator<Quiz>()

@@ -155,15 +155,7 @@ public class FlowCreateQuizActivity extends Activity {
 					Player p = new Player("coursera", "changeit");
 					mCreatedQuiz = new Quiz(title, p.getUsername(), difficulty, explanation, unrelatedMovie, movieSet);
 					
-					Gson gson = new Gson();
-					String jsonQuiz = gson.toJson(mCreatedQuiz);
-					JSONObject jsonObj = null;
-					try {
-						jsonObj = new JSONObject(jsonQuiz);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					Log.d("MUTIBO", "CreateQuiz:: jsonQuiz " + jsonQuiz);
+					JSONObject jsonObj = Utils.QuiztoJSON(mCreatedQuiz);
 					startNewAsyncTask(jsonObj);
 					
 				}

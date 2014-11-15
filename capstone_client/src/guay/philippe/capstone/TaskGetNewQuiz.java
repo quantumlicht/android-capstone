@@ -27,23 +27,11 @@ import android.util.Log;
 
 
 public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
-	 // Create a new HttpClient and Post Header
 	public IApiAccessResponse delegate=null;
 	HttpClient mHttpclient = new DefaultHttpClient();
 	HttpGet mHttpGet = new HttpGet("http://10.0.2.2:8080/quiz");
 	
     protected List<Quiz> doInBackground(String... params) {
-   		 
-//		 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-//		 nameValuePairs.add(new BasicNameValuePair("username", params[0]));
-//        nameValuePairs.add(new BasicNameValuePair("password", params[1]));
-//        
-//		 try {
-////			mHttpGet.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//		}
-	    	 
 		 Log.d("MUTIBO", "GetNewQuizTask Execute HTTP Post Request");
 		 HttpResponse response;
 		 try {
@@ -65,7 +53,7 @@ public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
 	   		
 			try {
 				Log.d("MUTIBO", "NewQuizTask::onPostExecute StatusCode " + response.getStatusLine().getStatusCode());
-				result = inputStreamToString(response.getEntity().getContent()).toString();
+				result = Utils.inputStreamToString(response.getEntity().getContent()).toString();
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -74,44 +62,13 @@ public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
 //	       Log.d("MUTIBO", "Response String " + str);
 //	       Boolean result = str.toString().equalsIgnoreCase("true");
 //	       Log.d("MUTIBO", "AsyncTask result " + result);
-           delegate.postResult(getJSON(result));
+           delegate.postResult(Utils.StringtoJSON(result));
         }
     	else {
             Log.e("ApiAccess", "You have not assigned IApiAccessResponse delegate");
         }
     }
     
-    private StringBuilder inputStreamToString(InputStream is) {
-        String line = "";
-        StringBuilder total = new StringBuilder();
-        // Wrap a BufferedReader around the InputStream
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        // Read response until the end
-        try {
-         while ((line = rd.readLine()) != null) { 
-           total.append(line); 
-         }
-        } catch (IOException e) {
-         e.printStackTrace();
-        }
-        // Return full string
-        return total;
-    }
-    
-    private JSONObject[] getJSON(String result){
-    	JSONObject[] json_data=null;
-    	
-    	try{
-            JSONArray jArray = new JSONArray(result);
-            json_data = new JSONObject[jArray.length()];
-            
-            for(int i=0;i<jArray.length();i++) {
-                json_data[i] = jArray.getJSONObject(i);
-            }
-    	} catch(JSONException e){
-            Log.e("MUTIBO", "Error parsing data "+e.toString());
-    	}
-    	return json_data;
-    }
+   
 
 }

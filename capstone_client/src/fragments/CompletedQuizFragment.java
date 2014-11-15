@@ -50,14 +50,11 @@ public class CompletedQuizFragment extends ListFragment {
 	private WeakReference<GetCompletedQuizTask> asyncTaskWeakRef;
 	private QuizAdapter mArrayAdapter;
 	List<Quiz> mItemList = new ArrayList<Quiz>();
-	public static final String ARG_SECTION_NUMBER = "section_number";
 	
-	public static ListFragment newInstance(String fragmentName) {
+	public static ListFragment newInstance() {
 	   ListFragment f =  new CompletedQuizFragment();
 	   
 	   Bundle args = new Bundle();
-       args.putString("name", fragmentName);
-       f.setArguments(args);
        return f;
 	}
 	

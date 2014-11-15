@@ -60,8 +60,7 @@ public class FlowHomePageActivity extends FragmentActivity implements
 
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		List<ListFragment> fragments = getFragments();
-		Log.d("MUTIBO",
-				"HomePageActivity::onCreate Instantiating appSectionsAdapter");
+		
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
 				getSupportFragmentManager(), fragments);
 		mViewPager.setOffscreenPageLimit(3);
@@ -109,9 +108,9 @@ public class FlowHomePageActivity extends FragmentActivity implements
 		Log.d("MUTIBO", "HomePageActivity::getFragments Getting Fragment List");
 		List<ListFragment> fList = new ArrayList<ListFragment>();
 
-		fList.add(NewQuizFragment.newInstance("Fragment 1"));
-		fList.add(CompletedQuizFragment.newInstance("Fragment 2"));
-		fList.add(CreatedQuizFragment.newInstance("Fragment 3"));
+		fList.add(NewQuizFragment.newInstance());
+		fList.add(CompletedQuizFragment.newInstance());
+		fList.add(CreatedQuizFragment.newInstance());
 		Log.d("MUTIBO", "HomePageActivity::returning Fragment List");
 		return fList;
 	}
@@ -207,8 +206,7 @@ public class FlowHomePageActivity extends FragmentActivity implements
 			Log.d("MUTIBO", "ArrayListFragment::onActivityCreated");
 			setListAdapter(new ArrayAdapter<String>(getActivity(),
 					android.R.layout.simple_list_item_1));
-			Log.d("MUTIBO",
-					"ArrayListFragment::onActivityCreated setListAdapter Called");
+			Log.d("MUTIBO","ArrayListFragment::onActivityCreated setListAdapter Called");
 		}
 
 		@Override
