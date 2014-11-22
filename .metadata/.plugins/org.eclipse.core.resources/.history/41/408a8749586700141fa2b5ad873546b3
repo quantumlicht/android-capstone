@@ -1,8 +1,0 @@
-package adapter;
-
-public class QuizListAdapter extends ArrayAdapter<JSONObject> {
-	 public QuizListAdapter(Context context){  
-	        super(context, R.layout.newquiz_text_virw);
-	    }
-	
-}

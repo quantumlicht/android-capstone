@@ -1,8 +1,0 @@
-package guay.philippe.capstone;
-
-public interface IApiAccessResponse {
-
-	void postResult(String result);
-	
-	void postResult(Boolean result);
-}

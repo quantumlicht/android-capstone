@@ -9,20 +9,24 @@ public class Quiz implements Parcelable{
 	
 	private String name;
 	private int id;
-	private int rating = 0;
+	private int rating;
 	private String justification;
 	private int unrelatedMovie;
 	private int authorId;
 	private String author;
 	private ArrayList<String> movieSet;
 	private int difficulty;
-	public Quiz(String name,String author, int difficulty, String justification, int unrelatedMovie, ArrayList<String> movieSet){
+	
+	// Constructors
+	//------------------------------------------------------------------
+	public Quiz(String name,String author, int difficulty, String justification, int unrelatedMovie, ArrayList<String> movieSet, int rating){
 		this.name = name;
 		this.author = author;
-		this.difficulty = rating;
+		this.difficulty = difficulty;
 		this.justification = justification;
 		this.unrelatedMovie = unrelatedMovie;
 		this.movieSet = movieSet;
+		this.rating = rating;
 	}
 	
 	public Quiz(Parcel in){
@@ -71,6 +75,7 @@ public class Quiz implements Parcelable{
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	
 	public int getUnrelatedMovie() {
 		return unrelatedMovie;

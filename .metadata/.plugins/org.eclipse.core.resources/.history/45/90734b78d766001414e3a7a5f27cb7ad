@@ -1,5 +1,0 @@
-package guay.philippe.capstone;
-
-public interface IApiAccessResponse {
-	void postResult(String asyncresult);
-}

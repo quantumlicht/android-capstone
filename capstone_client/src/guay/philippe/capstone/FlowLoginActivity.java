@@ -20,8 +20,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.json.JSONObject;
 
+import tasks.TaskAuthenticate;
+
 import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,76 +36,86 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-
-public class FlowLoginActivity extends ActionBarActivity implements IApiAccessResponse {
+public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 	private TextView mLoginResult;
 	private Boolean mRes;
-	
+	private String mUsername;
+	private String mPassword;
+	private TextView mTvUsername;
+	private TextView mTvPassword;
+	private boolean autologin = false;
+	private Context ctx;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
-		
-		Button mLoginButton = (Button) findViewById(R.id.login_submit_button);
-		TextView mLoginResult = (TextView) findViewById(R.id.login_result);
-		
-		mLoginButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				postLoginData();
-			}
-		});
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.login, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.rating_group) {
-			return true;
+		ctx = getApplicationContext();
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			autologin = bundle.getBoolean("autologin");
+			mUsername = bundle.getString("username");
+			mPassword = bundle.getString("password");
 		}
-		return super.onOptionsItemSelected(item);
+		Log.d("MUTIBO", "FlowLoginActivity::onCreate retrieve from intent -> autologin: " + autologin + " username: " + mUsername + " password: " + mPassword);
+		
+		if (autologin){
+			Log.d("MUTIBO", "FlowLoginActivity::onCreate detected Autologin");
+			postLoginData();
+		} else{
+			
+			setContentView(R.layout.activity_login);
+			
+			Button mLoginButton = (Button) findViewById(R.id.login_submit_button);
+			TextView mLoginResult = (TextView) findViewById(R.id.login_result);
+			mTvPassword = (TextView) findViewById(R.id.password);
+			mTvUsername = (TextView) findViewById(R.id.player_name);
+			
+			mLoginButton.setOnClickListener(new Button.OnClickListener() {
+				public void onClick(View v) {
+					mUsername = mTvUsername.getText().toString();
+					mPassword = mTvPassword.getText().toString();
+					postLoginData();
+				}
+			});
+		}
+		
 	}
 
 	@Override
 	public void postResult(Boolean asyncresult){
 	     //This method will get call as soon as your AsyncTask is complete. asyncresult will be your result.
-		 Log.d("MUTIBO", "asyncresult " + asyncresult);
+		 Log.d("MUTIBO", "FlowLoginActivity::postResult asyncresult: " + asyncresult);
 		 
 		 if(asyncresult){
-        	Log.d("MUTIBO", "TRUE");
+        	Log.d("MUTIBO", "FlowLoginActivity::postResult TRUE");
 //        	mLoginResult.setText("Login successful");
+        	SharedPreferences prefs = Utils.getStorage(ctx);
+        	SharedPreferences.Editor editor = prefs.edit();
+        	Log.d("MUTIBO", "FlowLoginActivity::postResult Writing Sharedpreferences: username: " + mUsername+ " password: " + mPassword);
+        	editor.putString("username", mUsername);
+        	editor.putString("password", mPassword);
+        	editor.commit();
         	Intent homeIntent = new Intent(FlowLoginActivity.this, FlowHomePageActivity.class);
-			FlowLoginActivity.this.startActivity(homeIntent);
+			startActivity(homeIntent);
         }
         else {
-        	Log.d("MUTIBO", "FALSE");
-        	mLoginResult.setText(asyncresult.toString());             
+        	Log.d("MUTIBO", "FlowLoginActivity::postResult FALSE");
+//        	mLoginResult.setText(asyncresult.toString());             
         }
 	}
 	
 	private void postLoginData() {
 		
-        // Add user name and password
-    	TextView uname = (TextView) findViewById(R.id.username);
-    	String username = uname.getText().toString();
-    	Log.d("MUTIBO", "username" + username);
-    	TextView pword = (TextView) findViewById(R.id.password);
-    	String password = pword.getText().toString();
-    	Log.d("MUTIBO", "password" + password);
-    	
-    	TaskAuthenticate authObj = new TaskAuthenticate();
+		if (!autologin) {
+			TextView uname = (TextView) findViewById(R.id.player_name);
+	    	String mUsername = uname.getText().toString();
+	    	Log.d("MUTIBO", "username" + mUsername);
+	    	TextView pword = (TextView) findViewById(R.id.password);
+	    	String mPassword = pword.getText().toString();
+	    	Log.d("MUTIBO", "password" + mPassword);
+		}
+    	TaskAuthenticate authObj = new TaskAuthenticate(getApplicationContext().getResources().getString(R.string.auth_endpoint));
     	authObj.delegate = this;
-		authObj.execute(username, password);
+		authObj.execute(mUsername, mPassword);
 	}
 
 	@Override

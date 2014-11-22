@@ -4,30 +4,36 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import tasks.TaskAuthenticate;
+
 import detailViews.DetailCreatedQuizActivity;
 import detailViews.DetailNewQuizActivity;
 
-import guay.philippe.capstone.TaskAuthenticate;
 import guay.philippe.capstone.FlowCreateQuizActivity;
 import guay.philippe.capstone.FlowHomePageActivity;
 import guay.philippe.capstone.IApiAccessResponse;
 import guay.philippe.capstone.FlowLoginActivity;
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.Utils;
+import Data.Player;
 import Data.Quiz;
 import adapter.QuizAdapter;
 import android.app.Activity;
-//import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -53,13 +59,19 @@ public class CreatedQuizFragment extends ListFragment {
 	
 	static final int CREATE_QUIZ_REQUEST = 0;
 	
-	public static ListFragment newInstance() {
-	   final ListFragment f =  new CreatedQuizFragment();
-	   
-	   Bundle args = new Bundle();
+	// PUBLIC
+	//--------------------------------------------------------------------
+	public static CreatedQuizFragment newInstance() {
+	   final CreatedQuizFragment f =  new CreatedQuizFragment();
        return f;
 	}
 	
+	public void refresh(){
+		startNewAsyncTask();
+	}
+
+	//OVERRIDES
+	//--------------------------------------------------------------------
 	@Override 
 	public void onCreate(Bundle savedInstanceState){
 	      super.onCreate(savedInstanceState);
@@ -68,15 +80,14 @@ public class CreatedQuizFragment extends ListFragment {
 	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
         
 		View rootView = inflater.inflate(R.layout.fragment_created_quiz, container, false);
         Log.d("MUTIBO", "CreatedQuizFragment::onCreateView Setting up QuizAdapter");
         
-        mListView = (ListView) getActivity().findViewById(R.id.list);
-		mArrayAdapter = new QuizAdapter(mItemList, getActivity());
+        mListView = (ListView) rootView.findViewById(android.R.id.list);
+		mArrayAdapter = new QuizAdapter(mItemList, getActivity(), "createdQuiz");
 		mArrayAdapter.setNotifyOnChange(true);
 		
 		Log.d("MUTIBO", "CreatedQuizFragment::onCreateView Instantiated adapter");
@@ -96,7 +107,7 @@ public class CreatedQuizFragment extends ListFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode,
             Intent data) {
-		Log.d("MUTIBO", "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
+		Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == CREATE_QUIZ_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
             	Quiz q = data.getParcelableExtra("Quiz");
@@ -120,7 +131,8 @@ public class CreatedQuizFragment extends ListFragment {
 	    intent.putExtra("quiz", q);
         startActivity(intent);
 	}
-   
+	// PRIVATE
+	//----------------------------------------------------------------------------------
 	private void startNewAsyncTask() {
 		GetCreatedQuizTask asyncTask = new GetCreatedQuizTask(this);
 	    this.asyncTaskWeakRef = new WeakReference<GetCreatedQuizTask >(asyncTask);
@@ -128,6 +140,8 @@ public class CreatedQuizFragment extends ListFragment {
 	    asyncTask.execute();
 	}
 	
+	// PRIVATE CLASS
+	//----------------------------------------------------------------------------------
 	private class GetCreatedQuizTask extends AsyncTask<String, Void, List<Quiz>> {
 		private WeakReference<CreatedQuizFragment> fragmentWeakRef;
 		
@@ -138,36 +152,50 @@ public class CreatedQuizFragment extends ListFragment {
 		@Override
 		protected List<Quiz> doInBackground(String... params) {
 			List<Quiz> result = new ArrayList<Quiz>();
+			Player p = Player.getCurrentPlayer(getActivity().getApplicationContext());
+			String strUrl = getActivity().getResources().getString(R.string.quiz_by_author_endpoint) + p.getUsername();
+			Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask Quiz Url: " + strUrl);
+			DefaultHttpClient client = new DefaultHttpClient();
+			HttpResponse response;
 			try{
-				Log.d("MUTIBO", "execution Quiz GET request");
-				URL u;
-				u = new URL("http://10.0.2.2:8080/quiz");
-				HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-	            conn.setRequestMethod("GET");
-	            conn.connect();
-	            Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask Gettting Connection");
-	            InputStream is = conn.getInputStream();
-	            
-	            // Read the stream
-	            byte[] b = new byte[1024];
-	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	            while ( is.read(b) != -1)
-	            baos.write(b);
-	            String JSONResp = new String(baos.toByteArray());
-	            JSONArray arr = new JSONArray(JSONResp);
-	            
-	            for (int i=0; i < arr.length(); i++) {
-	                result.add(Utils.convertQuiz(arr.getJSONObject(i)));
-	            }
-	            Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask Returning result->" + result.toString());
-	            conn.disconnect();
+				
+				URI u = new URI(strUrl);
+				HttpGet request = new HttpGet();
+				request.setURI(u);
+				request.addHeader("Content-Type", "application/json");
+				response = client.execute(request);
+				
+//				HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+//	            conn.setRequestMethod("GET");
+//	            conn.connect();
+//	            Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask Gettting Connection");
+//	            InputStream is = conn.getInputStream();
+//	            
+//	            // Read the stream
+//	            byte[] b = new byte[1024];
+//	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//	            while ( is.read(b) != -1)
+//	            baos.write(b);
+//	            String JSONResp = new String(baos.toByteArray());
+//	            JSONArray arr = new JSONArray(JSONResp);
+				JSONArray arr = null;
+				int statuscode = response.getStatusLine().getStatusCode();
+				if (statuscode == 200) {
+					arr = new JSONArray(EntityUtils.toString(response.getEntity()));
+				}
+				
+				if (arr != null) {
+					for (int i=0; i < arr.length(); i++) {
+						result.add(Utils.convertQuiz(arr.getJSONObject(i)));
+					}
+					//Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask Returning result->" + result.toString());
+				}
 	        	return result;
 			}
 			catch (Throwable t){
 				t.printStackTrace();
 			}
 			finally {
-				Log.d("MUTIBO", "Finally Block");
 				return result;
 			}
 
@@ -175,18 +203,16 @@ public class CreatedQuizFragment extends ListFragment {
 		
 		@Override
 		protected void onPostExecute(List<Quiz> result) {
-//			super.onPostExecute(result);
-			if (this.fragmentWeakRef.get() != null) {	
-				mArrayAdapter.setItemList(result);
-			
-				Log.d("MUTIBO", "CreatedQuizFragment::onPostExecute");
-				mArrayAdapter.notifyDataSetChanged();
+			//super.onPostExecute(result);
+			for (Iterator<Quiz> iter = result.listIterator(); iter.hasNext();) {
+				Quiz q = iter.next();
+				Log.d("MUTIBO", "CreatedQuizFragment::GetCreatedQuizTask::onPostExecute quizName: " + q.getName() + " rating: " + q.getRating());
 			}
-			Log.d("MUTIBO", "CreatedQuizFragment::onPostExecute NULL results");
+			mArrayAdapter.setItemList(result);
+			mArrayAdapter.notifyDataSetChanged();
 		}
+	}	// end GetCreatedQuizTask
+	
 
-		
-		
-	}	
 }
 	

@@ -6,7 +6,7 @@
     <item
         android:id="@+id/rating_group"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/logout_settings"
         app:showAsAction="never"/>
 
 </menu>

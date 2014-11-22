@@ -1,8 +1,0 @@
-package guay.philippe.capstone;
-
-public class Quiz {
-	
-	public Quiz(){
-		
-	}
-}

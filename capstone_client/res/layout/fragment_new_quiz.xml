@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="#fa6a6a"
+    android:layout_gravity="center_vertical"
+    android:background="#e3e3e3"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -10,26 +11,15 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
+            android:id="@+id/nb_new_quiz"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Username"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="156dp"
-            android:layout_height="wrap_content"
-            android:gravity="fill_horizontal|right"
-            android:text="My Score (999)"
+            android:layout_weight="0.1"
+            android:gravity="right"
+            android:text="0"
             android:textAlignment="gravity"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/intro_text"
@@ -37,9 +27,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:text="@string/newquiz_intro"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
 
@@ -48,13 +38,13 @@
         android:layout_height="299dp" >
 
         <ListView
-            android:id="@+id/android:list"
+            android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:drawSelectorOnTop="false" />
 
         <TextView
-            android:id="@+id/android:empty"
+            android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="No items."

@@ -73,7 +73,7 @@
         android:id="@+id/unrelated_movie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/difficulty"
+        android:layout_alignLeft="@+id/success"
         android:layout_alignTop="@+id/movie1"
         android:gravity="clip_vertical"
         android:orientation="vertical" >
@@ -106,12 +106,13 @@
     </RadioGroup>
 
     <SeekBar
-        android:id="@+id/difficulty"
+        android:id="@+id/success"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/submit_create"
         android:layout_alignLeft="@+id/intro_text"
         android:contentDescription="Difficulty"
+        android:indeterminate="false"
         android:max="4"
         android:progress="2" />
 
@@ -119,7 +120,7 @@
         android:id="@+id/seekBarValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/difficulty"
+        android:layout_alignTop="@+id/success"
         android:layout_centerHorizontal="true"
         android:text="Difficulty: 3" />
 
@@ -127,7 +128,7 @@
         android:id="@+id/explanation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/difficulty"
+        android:layout_above="@+id/success"
         android:layout_alignLeft="@+id/new_quiz_movie4"
         android:layout_marginBottom="16dp"
         android:ems="10"

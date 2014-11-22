@@ -11,18 +11,31 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
+import tasks.TaskCompletedQuiz;
+import tasks.TaskUpdatePlayer;
+
 import guay.philippe.capstone.FlowCreateQuizActivity;
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.R.id;
 import guay.philippe.capstone.R.layout;
 import guay.philippe.capstone.R.menu;
 import guay.philippe.capstone.Utils;
+import Data.CompletedQuiz;
+import Data.Player;
 import Data.Quiz;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +57,12 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 	private Button mDownvote;
 	private Button mNotNow;
 	private Button mAnswer;
-	private WeakReference<TaskNewQuizDetail> asyncTaskWeakRef;
+	private Boolean mHasVoted = false;
+	private BroadcastReceiver mMessageReceiver;
+	private WeakReference<TaskVoteQuiz> asyncTaskWeakRef;
+	
+	// OVERRIDE
+    //--------------------------------------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,11 +75,8 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 		mTitle = (TextView) findViewById(R.id.title);
 		mDifficulty = (TextView) findViewById(R.id.new_quiz_difficulty);
 		mMovie1 = (Button) findViewById(R.id.new_quiz_movie1);
-		
 		mMovie2 = (Button) findViewById(R.id.new_quiz_movie2);
-		
 		mMovie3 = (Button) findViewById(R.id.new_quiz_movie3);
-		
 		mMovie4 = (Button) findViewById(R.id.new_quiz_movie4);
 		
 		mJustification = (TextView) findViewById(R.id.new_quiz_justification);
@@ -79,17 +94,18 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 		mMovie4.setText(movieSet.get(3));
 		
 		mJustification.setText(quiz.getJustification());
+		Log.d("MUTIBO", "DetailNewQuizActivity::onCreate unrelatedMovie: " + quiz.getUnrelatedMovie());
 		switch(quiz.getUnrelatedMovie()){
-			case 0:
+			case 1:
 				mAnswer = mMovie1;
 				break;
-			case 1:
+			case 2:
 				mAnswer = mMovie2;
 				break;
-			case 2:
+			case 3:
 				mAnswer = mMovie3;
 				break;
-			case 3:
+			case 4:
 				mAnswer = mMovie4;
 				break;
 		}
@@ -105,158 +121,257 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 					case R.id.downvote:
 						quiz.setRating(quiz.getRating()-1);
 						startNewAsyncTask(quiz);
+						mHasVoted = true;
 						break;
 					case R.id.upvote:
 						quiz.setRating(quiz.getRating()+1);
 						startNewAsyncTask(quiz);
+						mHasVoted = true;
 						break;
 					case R.id.notnow:
-						break;
+						Intent intent = new Intent();
+						intent.putExtra("Quiz", quiz);
+						setResult(Activity.RESULT_OK, intent);
+						mHasVoted = false;
+						finish();
 				}
 			}
 		};
 		
-
 		mUpvote.setOnClickListener(voteListener);
 		mDownvote.setOnClickListener(voteListener);
 		mNotNow.setOnClickListener(voteListener);
+	}
+	
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.new_quiz_detail, menu);
+//		return true;
+//	}
+
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		// Handle action bar item clicks here. The action bar will
+//		// automatically handle clicks on the Home/Up button, so long
+//		// as you specify a parent activity in AndroidManifest.xml.
+//		int id = item.getItemId();
+//		if (id == R.id.rating_group) {
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
+	
+	@Override
+	public void onClick(View v) {
+		mRatingGroup.setVisibility(View.VISIBLE);
+		mJustification.setVisibility(View.VISIBLE);
+		int answer = 0;
+		boolean success = false;
+		switch(v.getId()) {
+   			case R.id.new_quiz_movie1:
+   				answer = 1;
+   				success = quiz.getUnrelatedMovie()==1;
+   				animateButton(success, mMovie1);
+//   				if (quiz.getUnrelatedMovie()==1){
+////   					mMovie1.setBackgroundColor(Color.GREEN);
+//   					success = true;
+//   					animateButton(success, mMovie1);
+//   					
+//   				}
+//   				else {
+//   					suc
+////        		   mMovie1.setBackgroundColor(Color.RED);
+////        		   mAnswer.setBackgroundColor(Color.GREEN);        		   
+//   				}
+   				break;
+   			case R.id.new_quiz_movie2:
+   				answer = 2;
+   				success = quiz.getUnrelatedMovie()==2;
+   				animateButton(success, mMovie2);
+//   				if (quiz.getUnrelatedMovie()==2){
+//   					success = true;
+////   					mMovie2.setBackgroundColor(Color.GREEN);
+//   				}
+//   				else {
+////   					mMovie2.setBackgroundColor(Color.RED);
+////   					mAnswer.setBackgroundColor(Color.GREEN);
+//   				}
+   				break;
+   			case R.id.new_quiz_movie3:
+   				answer = 3;
+   				success = quiz.getUnrelatedMovie()==3;
+   				animateButton(success, mMovie3);
+//   				if (quiz.getUnrelatedMovie()==3){
+//   					success = true;
+////   					mMovie3.setBackgroundColor(Color.GREEN);
+//   				}
+//   				else {
+////   					mMovie3.setBackgroundColor(Color.RED);
+////   					mAnswer.setBackgroundColor(Color.GREEN);
+//   				}
+   				break;
+       		case R.id.new_quiz_movie4:
+       			answer = 4;
+       			success = quiz.getUnrelatedMovie()==4;
+   				animateButton(success, mMovie4);
+//       			if (quiz.getUnrelatedMovie()==4){
+//       				success = true;
+////        	   			mMovie4.setBackgroundColor(Color.GREEN);
+//       			}
+//       			else {
+////           				mMovie4.setBackgroundColor(Color.RED);
+////           				mAnswer.setBackgroundColor(Color.GREEN);
+//       			}
+       			break;
+		}
+		
+		Player p = Player.getCurrentPlayer(getApplicationContext());
+		
+		CompletedQuiz compQ = new CompletedQuiz(quiz.getName(), p.getUsername(), answer, success);
+		compQ.setHasVoted(mHasVoted);
+		JSONObject jsonCompletedQuiz = Utils.CompletedQuiztoJSON(compQ);
+		TaskCompletedQuiz postCompletedQuizTask = new TaskCompletedQuiz(getApplicationContext(), "POST");
+		postCompletedQuizTask.execute(jsonCompletedQuiz);
+		
+		if (success) {
+			SharedPreferences prefs = Utils.getStorage(getApplicationContext());
+        	SharedPreferences.Editor editor = prefs.edit();
+        	int score = p.getScore() + quiz.getDifficulty();
+        	Log.d("MUTIBO", "Writing score to sharedPrefs: " + score);
+        	editor.putInt("score", score);
+        	editor.commit();
+			p.setScore(score);
+			publishPlayerScoreUpdate(p);
+		}
+		
+		TaskUpdatePlayer updatePlayerTask = new TaskUpdatePlayer(getApplicationContext());
+	    //this.asyncTaskWeakRef = new WeakReference<TaskPostQuizResult>(asyncTask);
+	    Log.d("MUTIBO", "DetailNewQuizActivity::startNewAsyncTask executing task");
+	    JSONObject jsonPlayer = Utils.PlayertoJSON(p);
+	    updatePlayerTask.execute(jsonPlayer);
+		
+		mMovie1.setOnClickListener(null);
+		mMovie2.setOnClickListener(null);
+		mMovie3.setOnClickListener(null);
+		mMovie4.setOnClickListener(null);
+	}
+	
+	// PRIVATE
+	private void animateButton(boolean success, final Button button){
+		
+		//StateListDrawable draw = mAnswer.getBackground();
+		//draw.getState();
+		int colorFrom =  getResources().getColor(R.color.button_color);
+		int colorToSuccess = Color.GREEN;
+		int colorToFail = Color.RED;
+		
+		ValueAnimator colorAnimationSuccess = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorToSuccess);
+		ValueAnimator colorAnimationFail = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorToFail);
+		colorAnimationFail.setDuration(1500);
+		colorAnimationSuccess.setDuration(1500);
+		if (success) {
+			colorAnimationSuccess.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			    @Override
+			    public void onAnimationUpdate(ValueAnimator animator) {
+			        mAnswer.setBackgroundColor((Integer)animator.getAnimatedValue());
+			    }
+
+			});
+			colorAnimationSuccess.start();
+		}
+		else{
+			colorAnimationFail.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			    @Override
+			    public void onAnimationUpdate(ValueAnimator animator) {
+			        button.setBackgroundColor((Integer)animator.getAnimatedValue());
+			    }
+
+			});
+			
+			colorAnimationSuccess.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			    @Override
+			    public void onAnimationUpdate(ValueAnimator animator) {
+			        mAnswer.setBackgroundColor((Integer)animator.getAnimatedValue());
+			    }
+
+			});
+			colorAnimationSuccess.start();
+			colorAnimationFail.start();
+		}
+		
 		
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.new_quiz_detail, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.rating_group) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	 @Override
-	 public void onClick(View v) {
-	   mRatingGroup.setVisibility(View.VISIBLE);
-	   mJustification.setVisibility(View.VISIBLE);
-	   
-       switch(v.getId()) {
-           case R.id.new_quiz_movie1:
-        	   if (quiz.getUnrelatedMovie()==1){
-	        	 mMovie1.setBackgroundColor(Color.GREEN);
-        	   }
-        	   else {
-        		   mMovie1.setBackgroundColor(Color.RED);
-        		   mAnswer.setBackgroundColor(Color.GREEN);        		   
-        	   }
-        	   break;
-           case R.id.new_quiz_movie2:
-        	   if (quiz.getUnrelatedMovie()==2){
-        		   mMovie2.setBackgroundColor(Color.GREEN);
-          	   }
-          	   else {
-          		   mMovie2.setBackgroundColor(Color.RED);
-          		   mAnswer.setBackgroundColor(Color.GREEN);
-          	   }
-           break;
-           case R.id.new_quiz_movie3:
-        	   if (quiz.getUnrelatedMovie()==3){
-  	        	 mMovie3.setBackgroundColor(Color.GREEN);
-          	   }
-          	   else {
-          		   mMovie3.setBackgroundColor(Color.RED);
-          		   mAnswer.setBackgroundColor(Color.GREEN);
-          	   }
-	           break;
-           case R.id.new_quiz_movie4:
-        	   if (quiz.getUnrelatedMovie()==4){
-  	        	 mMovie4.setBackgroundColor(Color.GREEN);
-  	        	
-          	   }
-          	   else {
-          		   mMovie4.setBackgroundColor(Color.RED);
-          		   mAnswer.setBackgroundColor(Color.GREEN);
-          	   }
-	           break;
-       }
-       mMovie1.setOnClickListener(null);
-       mMovie2.setOnClickListener(null);
-       mMovie3.setOnClickListener(null);
-       mMovie4.setOnClickListener(null);
-	 }
-	 
-	 private void startNewAsyncTask(Quiz q) {
-		 TaskNewQuizDetail asyncTask = new TaskNewQuizDetail(this);
-		    this.asyncTaskWeakRef = new WeakReference<TaskNewQuizDetail>(asyncTask);
+    //--------------------------------------------------------------------------
+	private void startNewAsyncTask(Quiz q) {
+		TaskVoteQuiz asyncTask = new TaskVoteQuiz(this);
+		    this.asyncTaskWeakRef = new WeakReference<TaskVoteQuiz>(asyncTask);
 		    Log.d("MUTIBO", "DetailNewQuizActivity::startNewAsyncTask executing task");
 		    
 		    JSONObject jsonQuiz = Utils.QuiztoJSON(q);
 		    asyncTask.execute(jsonQuiz);
 	}
-	 
-	private class TaskNewQuizDetail extends AsyncTask<JSONObject, Void, HttpResponse> {
-			private WeakReference<DetailNewQuizActivity> fragmentWeakRef;
+	
+	private void publishPlayerScoreUpdate(Player p){
+		Intent intent = new Intent("update-player");
+		  // add data
+		intent.putExtra("score", p.getScore());
+		intent.putExtra("username", p.getUsername());
+		Log.d("MUTIBO", "DetailNewQuizActivity::publishPlayerScoreUpdate Broadcasting event: 'update-player'");
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+	}
+	
+	// PRIVATE CLASS
+    //--------------------------------------------------------------------------
+	private class TaskVoteQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
+		private WeakReference<DetailNewQuizActivity> fragmentWeakRef;
 			
-			 private TaskNewQuizDetail (DetailNewQuizActivity activity) {
+		private TaskVoteQuiz (DetailNewQuizActivity activity) {
 		            this.fragmentWeakRef = new WeakReference<DetailNewQuizActivity>(activity);
-	        }
+        }
 			
-			@Override
-			protected HttpResponse doInBackground(JSONObject... jsonQuiz) {
-				HttpResponse response = null;
-				try{
-					
-					Log.d("MUTIBO", "CreateQuizActivity Quiz PUT request");
-					HttpClient client = new DefaultHttpClient();
-					//TODO Try resetting timeout
-					//HttpConnectionParams.setConnectionTimeout(client.getParams(), TIMEOUT_MILLISEC);
-					//HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
-					HttpPut put = new HttpPut("http://10.0.2.2:8080/quiz");
-					
-					StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
-					se.setContentType("application/json; charset=UTF-8");
-					put.setEntity(se);
-					response = client.execute(put);
-					Log.d("MUTIBO", "Request " + put.toString());
-					Log.d("MUTIBO", "entity " + put.getEntity().toString());
-					Log.d("MUTIBO", "params " + put.getParams());
-					Log.d("MUTIBO", "Server Response " + response.getStatusLine().getStatusCode());
-				}
-				catch (Throwable t){
-					t.printStackTrace();
-				}
-				finally {
-					Log.d("MUTIBO", "CreateQuizActivity Finally Block");
-					return response;
-				}
-
-			}
-			
-			@Override
-			protected void onPostExecute(HttpResponse response) {
-	    			//super.onPostExecute(result);
-					//mArrayAdapter.setItemList(result);
-					Log.d("MUTIBO", "DetailNewQuizActivity::onPostExecute");
-					//Boolean res = response.getStatusLine().getStatusCode() == 200;
-					//Log.d("MUTIBO", "CreateQuizActivity::onPostExecute Status: " + response.getStatusLine());
-//					if (res){
-//						Intent intent = new Intent();
-//						intent.putExtra("Quiz", mCreatedQuiz);
-//						setResult(Activity.RESULT_OK, intent);
-//						Log.d("MUTIBO", "Successfully created quiz");
-//						finish();
-//					}
+		@Override
+		protected HttpResponse doInBackground(JSONObject... jsonQuiz) {
+			HttpResponse response = null;
+			try{
+				Log.d("MUTIBO", "DetailNewQuizActivity::TaskVoteQuiz::doInBackground Quiz PUT request");
+				HttpClient client = new DefaultHttpClient();
 				
-					//Intent intent = new Intent();
-					//new Intent (getActivity().getApplicationContext(), FlowCreateQuizActivity.class);
-					//mArrayAdapter.notifyDataSetChanged();
+				HttpPut put = new HttpPut(getResources().getString(R.string.quiz_base_endpoint));
+				
+				StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
+				se.setContentType("application/json; charset=UTF-8");
+				put.setEntity(se);
+				response = client.execute(put);
+				Log.d("MUTIBO", "Server Response " + response.getStatusLine().getStatusCode());
 			}
+			catch (Throwable t){
+				t.printStackTrace();
+			}
+			finally {
+				Log.d("MUTIBO", "DetailNewQuizActivity::TaskVoteQuiz::doInBackground Finally Block");
+				return response;
+			}
+
 		}
+			
+		@Override
+		protected void onPostExecute(HttpResponse response) {
+			//super.onPostExecute(result);
+			//mArrayAdapter.setItemList(result);
+			Log.d("MUTIBO", "DetailNewQuizActivity::TaskVoteQuiz::onPostExecute Status: " + response.getStatusLine());
+			Boolean res = response.getStatusLine().getStatusCode() == 200;
+				
+			Intent intent = new Intent();
+			intent.putExtra("Quiz", quiz);
+			if (res){
+				setResult(Activity.RESULT_OK, intent);
+			}
+			else {
+				setResult(Activity.RESULT_CANCELED, intent);
+			}
+			finish();
+		}
+	}
 }

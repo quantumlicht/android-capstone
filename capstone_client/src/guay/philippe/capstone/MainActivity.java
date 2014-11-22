@@ -2,7 +2,9 @@ package guay.philippe.capstone;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,12 +26,26 @@ public class MainActivity extends ActionBarActivity {
     		}
         });
         
-        mButtonLogin.setOnClickListener(new Button.OnClickListener(){
+        SharedPreferences prefs = Utils.getStorage(getApplicationContext());
+        String username = prefs.getString("username", "");
+        String password = prefs.getString("password", "");
+        
+        Log.d("MUTIBO", "MainActivity::onCreate retrieved from sharedPrefs -> username: " + username + " password: " + password);
+        if (username != "" && password != "") {
+        	Intent intent = new Intent(MainActivity.this, FlowLoginActivity.class);
+        	intent.putExtra("autologin", true);
+        	intent.putExtra("username", username);
+        	intent.putExtra("password", password);
+        	startActivity(intent);
+        }
+    	mButtonLogin.setOnClickListener(new Button.OnClickListener(){
+        	//TODO: Add button in menu to logout, wipe creds in this case
     		public void onClick(View v){
-    			Intent intent = new Intent(MainActivity.this, FlowLoginActivity.class);
-    			MainActivity.this.startActivity(intent);
+    			Intent intent = new Intent(MainActivity.this, FlowLoginActivity.class);    			
+    			startActivity(intent);
     		}
-        });
+    	});
+        
     }
 
 

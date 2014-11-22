@@ -93,8 +93,12 @@ public class FlowCreateQuizActivity extends Activity {
 		mMovie2 = (TextView) findViewById(R.id.movie2);
 		mMovie3 = (TextView) findViewById(R.id.movie3);
 		mMovie4 = (TextView) findViewById(R.id.new_quiz_movie4);
-		mDifficulty = (SeekBar) findViewById(R.id.difficulty);
+		mDifficulty = (SeekBar) findViewById(R.id.success);
 		mUnrelatedMovieGroup = (RadioGroup) findViewById(R.id.unrelated_movie);
+		
+		difficulty = mDifficulty.getProgress();
+		mDifficulty.setIndeterminate(false);
+		
 		
 		mSeekBarValue = (TextView) findViewById(R.id.seekBarValue);
 		mDifficulty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -127,9 +131,7 @@ public class FlowCreateQuizActivity extends Activity {
 				unrelatedMovieGroupId = mUnrelatedMovieGroup.getCheckedRadioButtonId();
 				mUnrelatedMovie = (RadioButton) findViewById(unrelatedMovieGroupId);
 				unrelatedMovie = Integer.valueOf(mUnrelatedMovie.getText().toString());
-	            // find the radiobutton by returned id
-	                
-				
+
 				if ( title == "") {
 					CharSequence text = "You need to define a title";
 					toast = Toast.makeText(context, text, toast_duration);
@@ -146,40 +148,22 @@ public class FlowCreateQuizActivity extends Activity {
 					toast.show();
 				}
 				else{
-					Log.d("MUTIBO", "Valid Quiz. Sending to server");
+					Log.d("MUTIBO", "FlowCreateQuizActivity::mSubmit.setOnClickListener Valid Quiz. Sending to server");
 					
 					movieSet.add(movie1);
 					movieSet.add(movie2);
 					movieSet.add(movie3);
 					movieSet.add(movie4);
-					Player p = new Player("coursera", "changeit");
-					mCreatedQuiz = new Quiz(title, p.getUsername(), difficulty, explanation, unrelatedMovie, movieSet);
+					
+					Log.d("MUTIBO", "FlowCreateQuizActivity::onCreate difficulty: " + difficulty);
+					Player p = Player.getCurrentPlayer(getApplicationContext());
+					mCreatedQuiz = new Quiz(title, p.getUsername(), difficulty, explanation, unrelatedMovie, movieSet,0);
 					
 					JSONObject jsonObj = Utils.QuiztoJSON(mCreatedQuiz);
 					startNewAsyncTask(jsonObj);
-					
 				}
 			}
 		});
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.create, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.rating_group) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 	
 	private void startNewAsyncTask(JSONObject jsonQuiz) {
@@ -203,10 +187,8 @@ public class FlowCreateQuizActivity extends Activity {
 				
 				Log.d("MUTIBO", "CreateQuizActivity Quiz POST request");
 				HttpClient client = new DefaultHttpClient();
-				//TODO Try resetting timeout
-				//HttpConnectionParams.setConnectionTimeout(client.getParams(), TIMEOUT_MILLISEC);
-				//HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
-				HttpPost post = new HttpPost("http://10.0.2.2:8080/quiz");
+				String url = getApplicationContext().getResources().getString(R.string.quiz_base_endpoint);
+				HttpPost post = new HttpPost(url);
 				
 				StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
 				se.setContentType("application/json; charset=UTF-8");
@@ -215,13 +197,13 @@ public class FlowCreateQuizActivity extends Activity {
 				Log.d("MUTIBO", "Request " + post.toString());
 				Log.d("MUTIBO", "entity " + post.getEntity().toString());
 				Log.d("MUTIBO", "params " + post.getParams());
-				Log.d("MUTIBO", "Server Response " + response.getStatusLine().getStatusCode());
+				Log.d("MUTIBO", "FlowCreateQuizActivity::doInBackground Server Response " + response.getStatusLine().getStatusCode());
 			}
 			catch (Throwable t){
 				t.printStackTrace();
 			}
 			finally {
-				Log.d("MUTIBO", "CreateQuizActivity Finally Block");
+				Log.d("MUTIBO", "FlowCreateQuizActivity::doInBackground Finally Block");
 				return response;
 			}
 

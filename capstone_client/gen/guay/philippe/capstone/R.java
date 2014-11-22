@@ -858,10 +858,12 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f050002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f060003;
+        public static final int abc_search_url_text_holo=0x7f060005;
         public static final int abc_search_url_text_normal=0x7f060000;
         public static final int abc_search_url_text_pressed=0x7f060002;
         public static final int abc_search_url_text_selected=0x7f060001;
+        public static final int button_color=0x7f060003;
+        public static final int choice_color=0x7f060004;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1077,10 +1079,11 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_launcher=0x7f020057;
+        public static final int button=0x7f020057;
+        public static final int ic_launcher=0x7f020058;
     }
     public static final class id {
-        public static final int Intro=0x7f090050;
+        public static final int Intro=0x7f090052;
         public static final int action_bar=0x7f09001c;
         public static final int action_bar_activity_content=0x7f090001;
         public static final int action_bar_container=0x7f09001b;
@@ -1094,19 +1097,25 @@ containing a value of this type.
         public static final int action_mode_close_button=0x7f090024;
         public static final int activity_chooser_view_content=0x7f090025;
         public static final int always=0x7f09000f;
-        public static final int author=0x7f090065;
+        public static final int author=0x7f09006e;
         public static final int beginning=0x7f090016;
         public static final int checkbox=0x7f09002d;
         public static final int collapseActionView=0x7f090010;
-        public static final int createButton=0x7f090063;
+        public static final int completed_quiz_difficulty=0x7f090057;
+        public static final int completed_quiz_justification=0x7f090058;
+        public static final int completed_quiz_movie1=0x7f09005e;
+        public static final int completed_quiz_movie2=0x7f09005f;
+        public static final int completed_quiz_movie3=0x7f090060;
+        public static final int completed_quiz_movie4=0x7f090061;
+        public static final int createButton=0x7f090067;
         public static final int default_activity_button=0x7f090028;
         public static final int dialog=0x7f090014;
-        public static final int difficulty=0x7f090045;
+        public static final int difficulty_created=0x7f09006b;
+        public static final int difficulty_new=0x7f09006f;
         public static final int disableHome=0x7f090009;
-        public static final int downvote=0x7f09005e;
+        public static final int downvote=0x7f09005c;
         public static final int dropdown=0x7f090015;
         public static final int edit_query=0x7f090030;
-        public static final int empty=0x7f090062;
         public static final int end=0x7f090017;
         public static final int expand_activities_button=0x7f090026;
         public static final int expanded_menu=0x7f09002c;
@@ -1117,42 +1126,47 @@ containing a value of this type.
         public static final int ifRoom=0x7f090011;
         public static final int image=0x7f090027;
         public static final int intro_text=0x7f09003c;
-        public static final int linearLayout1=0x7f090056;
-        public static final int list=0x7f090061;
+        public static final int linearLayout1=0x7f090059;
         public static final int listMode=0x7f090006;
         public static final int list_item=0x7f090029;
-        public static final int login_button=0x7f090052;
-        public static final int login_result=0x7f09004e;
-        public static final int login_submit_button=0x7f09004f;
+        public static final int login_button=0x7f090054;
+        public static final int login_result=0x7f090050;
+        public static final int login_submit_button=0x7f090051;
         public static final int middle=0x7f090018;
         public static final int movie1=0x7f090043;
         public static final int movie2=0x7f090041;
         public static final int movie3=0x7f090040;
-        public static final int name=0x7f090064;
+        public static final int nb_new_quiz=0x7f090068;
         public static final int never=0x7f090012;
-        public static final int new_quiz_difficulty=0x7f090055;
-        public static final int new_quiz_justification=0x7f09005a;
-        public static final int new_quiz_movie1=0x7f090057;
-        public static final int new_quiz_movie2=0x7f090058;
-        public static final int new_quiz_movie3=0x7f090059;
+        public static final int new_quiz_difficulty=0x7f090062;
+        public static final int new_quiz_justification=0x7f090063;
+        public static final int new_quiz_movie1=0x7f090064;
+        public static final int new_quiz_movie2=0x7f090065;
+        public static final int new_quiz_movie3=0x7f090066;
         public static final int new_quiz_movie4=0x7f09003f;
-        public static final int new_quiz_title=0x7f090054;
+        public static final int new_quiz_title=0x7f090056;
         public static final int none=0x7f090019;
         public static final int normal=0x7f090007;
-        public static final int notnow=0x7f09005f;
-        public static final int pager=0x7f09004b;
-        public static final int password=0x7f09004d;
+        public static final int notnow=0x7f09005d;
+        public static final int pager=0x7f09004e;
+        public static final int password=0x7f09004f;
+        public static final int player_name=0x7f09004b;
+        public static final int player_score=0x7f09004c;
         public static final int progress_circular=0x7f090004;
         public static final int progress_horizontal=0x7f090005;
+        public static final int quiz_name_completed=0x7f090069;
+        public static final int quiz_name_created=0x7f09006a;
+        public static final int quiz_name_new=0x7f09006d;
         public static final int quiz_title=0x7f090042;
         public static final int radio=0x7f09002f;
         public static final int radio1=0x7f090046;
         public static final int radio2=0x7f090047;
         public static final int radio3=0x7f090048;
         public static final int radio4=0x7f090049;
-        public static final int rating_group=0x7f09005b;
-        public static final int register_button=0x7f090051;
-        public static final int register_submit_button=0x7f090053;
+        public static final int rating=0x7f09006c;
+        public static final int rating_group=0x7f09005a;
+        public static final int register_button=0x7f090053;
+        public static final int register_submit_button=0x7f090055;
         public static final int search_badge=0x7f090032;
         public static final int search_bar=0x7f090031;
         public static final int search_button=0x7f090033;
@@ -1171,16 +1185,15 @@ containing a value of this type.
         public static final int split_action_bar=0x7f09001e;
         public static final int submit_area=0x7f090039;
         public static final int submit_create=0x7f09003d;
+        public static final int success=0x7f090045;
+        public static final int sync=0x7f09004d;
         public static final int tabMode=0x7f090008;
-        public static final int textView1=0x7f09005c;
-        public static final int textView2=0x7f090060;
         public static final int title=0x7f09002b;
         public static final int top_action_bar=0x7f090020;
         public static final int unrelated_movie=0x7f090044;
         public static final int up=0x7f090021;
-        public static final int upvote=0x7f09005d;
+        public static final int upvote=0x7f09005b;
         public static final int useLogo=0x7f09000e;
-        public static final int username=0x7f09004c;
         public static final int withText=0x7f090013;
     }
     public static final class integer {
@@ -1238,21 +1251,21 @@ containing a value of this type.
         public static final int activity_login=0x7f03001a;
         public static final int activity_main=0x7f03001b;
         public static final int activity_register=0x7f03001c;
-        public static final int detail_new_quiz=0x7f03001d;
-        public static final int fragment_completed_quiz=0x7f03001e;
-        public static final int fragment_created_quiz=0x7f03001f;
-        public static final int fragment_home_page=0x7f030020;
-        public static final int fragment_new_quiz=0x7f030021;
-        public static final int newquiz_item=0x7f030022;
-        public static final int support_simple_spinner_dropdown_item=0x7f030023;
+        public static final int detail_completed_quiz=0x7f03001d;
+        public static final int detail_new_quiz=0x7f03001e;
+        public static final int fragment_completed_quiz=0x7f03001f;
+        public static final int fragment_created_quiz=0x7f030020;
+        public static final int fragment_home_page=0x7f030021;
+        public static final int fragment_new_quiz=0x7f030022;
+        public static final int item_completedquiz=0x7f030023;
+        public static final int item_createdquiz=0x7f030024;
+        public static final int item_newquiz=0x7f030025;
+        public static final int support_simple_spinner_dropdown_item=0x7f030026;
     }
     public static final class menu {
-        public static final int create=0x7f0c0000;
-        public static final int home_page=0x7f0c0001;
-        public static final int login=0x7f0c0002;
-        public static final int main=0x7f0c0003;
-        public static final int new_quiz_detail=0x7f0c0004;
-        public static final int register=0x7f0c0005;
+        public static final int home_page=0x7f0c0000;
+        public static final int main=0x7f0c0001;
+        public static final int new_quiz_detail=0x7f0c0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1295,27 +1308,34 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int action_settings=0x7f0a000f;
+        public static final int action_settings=0x7f0a0010;
         public static final int app_name=0x7f0a000d;
-        public static final int hello_world=0x7f0a0019;
+        public static final int auth_endpoint=0x7f0a0026;
+        public static final int completedquiz_base_endpoint=0x7f0a0027;
+        public static final int hello_world=0x7f0a001a;
         public static final int intro_text=0x7f0a000e;
-        public static final int login=0x7f0a0011;
-        public static final int login_intro=0x7f0a001a;
-        public static final int login_password=0x7f0a001c;
-        public static final int login_submit=0x7f0a001d;
-        public static final int login_username=0x7f0a001b;
-        public static final int newquiz_intro=0x7f0a0021;
-        public static final int register=0x7f0a0010;
-        public static final int register_intro=0x7f0a0013;
-        public static final int register_password=0x7f0a0015;
-        public static final int register_password2=0x7f0a0016;
-        public static final int register_submit=0x7f0a0017;
-        public static final int register_username=0x7f0a0014;
-        public static final int title_activity_create=0x7f0a0020;
-        public static final int title_activity_home_page=0x7f0a001e;
-        public static final int title_activity_login=0x7f0a0018;
-        public static final int title_activity_new_quiz_detail=0x7f0a001f;
-        public static final int title_activity_register=0x7f0a0012;
+        public static final int login=0x7f0a0012;
+        public static final int login_intro=0x7f0a001b;
+        public static final int login_password=0x7f0a001d;
+        public static final int login_submit=0x7f0a001e;
+        public static final int login_username=0x7f0a001c;
+        public static final int logout_settings=0x7f0a000f;
+        public static final int newquiz_intro=0x7f0a0022;
+        public static final int player_base_endpoint=0x7f0a0028;
+        public static final int quiz_base_endpoint=0x7f0a0025;
+        public static final int quiz_by_author_endpoint=0x7f0a0023;
+        public static final int quiz_by_name_endpoint=0x7f0a0024;
+        public static final int register=0x7f0a0011;
+        public static final int register_intro=0x7f0a0014;
+        public static final int register_password=0x7f0a0016;
+        public static final int register_password2=0x7f0a0017;
+        public static final int register_submit=0x7f0a0018;
+        public static final int register_username=0x7f0a0015;
+        public static final int title_activity_create=0x7f0a0021;
+        public static final int title_activity_home_page=0x7f0a001f;
+        public static final int title_activity_login=0x7f0a0019;
+        public static final int title_activity_new_quiz_detail=0x7f0a0020;
+        public static final int title_activity_register=0x7f0a0013;
     }
     public static final class style {
         /** 
