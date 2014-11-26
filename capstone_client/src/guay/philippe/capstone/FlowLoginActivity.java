@@ -1,6 +1,8 @@
 package guay.philippe.capstone;
 
 
+import guay.philippe.capstone.data.AuthRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +20,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import tasks.TaskAuthenticate;
@@ -41,6 +45,7 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 	private Boolean mRes;
 	private String mUsername;
 	private String mPassword;
+	private String mAccessToken;
 	private TextView mTvUsername;
 	private TextView mTvPassword;
 	private boolean autologin = false;
@@ -49,77 +54,88 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ctx = getApplicationContext();
-		Bundle bundle = getIntent().getExtras();
-		if (bundle != null) {
-			autologin = bundle.getBoolean("autologin");
-			mUsername = bundle.getString("username");
-			mPassword = bundle.getString("password");
-		}
-		Log.d("MUTIBO", "FlowLoginActivity::onCreate retrieve from intent -> autologin: " + autologin + " username: " + mUsername + " password: " + mPassword);
+//		Bundle bundle = getIntent().getExtras();
+//		if (bundle != null) {
+//			autologin = bundle.getBoolean("autologin");
+//			mUsername = bundle.getString("username");
+//			mPassword = bundle.getString("password");
+//			mAccessToken = bundle.getString("access_token");
+//		}
+//		Log.d("MUTIBO", "FlowLoginActivity::onCreate retrieve from intent -> autologin: " + autologin + " username: " + mUsername + " password: " + mPassword);
 		
-		if (autologin){
-			Log.d("MUTIBO", "FlowLoginActivity::onCreate detected Autologin");
-			postLoginData();
-		} else{
+//		if (autologin){
+//			Log.d("MUTIBO", "FlowLoginActivity::onCreate detected Autologin");
+//			postLoginData();
+//		}
+//		else {
 			
-			setContentView(R.layout.activity_login);
-			
-			Button mLoginButton = (Button) findViewById(R.id.login_submit_button);
-			TextView mLoginResult = (TextView) findViewById(R.id.login_result);
-			mTvPassword = (TextView) findViewById(R.id.password);
-			mTvUsername = (TextView) findViewById(R.id.player_name);
-			
-			mLoginButton.setOnClickListener(new Button.OnClickListener() {
-				public void onClick(View v) {
-					mUsername = mTvUsername.getText().toString();
-					mPassword = mTvPassword.getText().toString();
-					postLoginData();
-				}
-			});
-		}
+		setContentView(R.layout.activity_login);
 		
+		Button mLoginButton = (Button) findViewById(R.id.login_submit_button);
+		TextView mLoginResult = (TextView) findViewById(R.id.login_result);
+		mTvPassword = (TextView) findViewById(R.id.password);
+		mTvUsername = (TextView) findViewById(R.id.player_name);
+		
+		mLoginButton.setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View v) {
+				mUsername = mTvUsername.getText().toString();
+				mPassword = mTvPassword.getText().toString();
+				postLoginData();
+			}
+		});
+//		}
 	}
 
 	@Override
-	public void postResult(Boolean asyncresult){
-	     //This method will get call as soon as your AsyncTask is complete. asyncresult will be your result.
-		 Log.d("MUTIBO", "FlowLoginActivity::postResult asyncresult: " + asyncresult);
-		 
-		 if(asyncresult){
-        	Log.d("MUTIBO", "FlowLoginActivity::postResult TRUE");
-//        	mLoginResult.setText("Login successful");
-        	SharedPreferences prefs = Utils.getStorage(ctx);
-        	SharedPreferences.Editor editor = prefs.edit();
-        	Log.d("MUTIBO", "FlowLoginActivity::postResult Writing Sharedpreferences: username: " + mUsername+ " password: " + mPassword);
-        	editor.putString("username", mUsername);
-        	editor.putString("password", mPassword);
-        	editor.commit();
-        	Intent homeIntent = new Intent(FlowLoginActivity.this, FlowHomePageActivity.class);
-			startActivity(homeIntent);
-        }
-        else {
-        	Log.d("MUTIBO", "FlowLoginActivity::postResult FALSE");
-//        	mLoginResult.setText(asyncresult.toString());             
-        }
-	}
+	public void postResult(JSONObject[] res){
+
+    }
+
 	
 	private void postLoginData() {
-		
 		if (!autologin) {
 			TextView uname = (TextView) findViewById(R.id.player_name);
 	    	String mUsername = uname.getText().toString();
-	    	Log.d("MUTIBO", "username" + mUsername);
+	    	Log.d("MUTIBO", "FlowLoginActivity::postLoginData username: " + mUsername);
 	    	TextView pword = (TextView) findViewById(R.id.password);
 	    	String mPassword = pword.getText().toString();
-	    	Log.d("MUTIBO", "password" + mPassword);
+	    	Log.d("MUTIBO", "FlowLoginActivity::postLoginData password: " + mPassword);
 		}
-    	TaskAuthenticate authObj = new TaskAuthenticate(getApplicationContext().getResources().getString(R.string.auth_endpoint));
+    	TaskAuthenticate authObj = new TaskAuthenticate(getApplicationContext());
     	authObj.delegate = this;
 		authObj.execute(mUsername, mPassword);
 	}
 
 	@Override
-	public void postResult(JSONObject[] jsonObjects) {
-		
+	public void postResult(Boolean result) {
 	}
+
+	@Override
+	public void postResult(JSONArray arr) {
+		Log.d("MUTIBO", "FlowLoginActivity::postResult arr: " + arr.length());
+		Log.d("MUTIBO", "FlowLoginActivity::postResult arr: " + arr.optJSONObject(0));
+		AuthRequest auth_req = null;
+		try {
+			auth_req = Utils.convertAuthRequest(arr.getJSONObject(0));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		Log.d("MUTIBO", "FlowLoginActivity::postResult token: " + auth_req.getAccessToken());
+		//	mLoginResult.setText("Login successful");
+		 SharedPreferences prefs = Utils.getStorage(ctx);
+		 SharedPreferences.Editor editor = prefs.edit();
+//		 Log.d("MUTIBO", "FlowLoginActivity::postResult Writing Sharedpreferences: username: " + mUsername+ " password: " + mPassword + " acces_token: " + );
+		 editor.putString("username", mUsername);
+		 editor.putString("password", mPassword);
+		 editor.putString("access_token", auth_req.getAccessToken());
+		 editor.putString("token_type", auth_req.getTokenType());
+		 editor.putInt("expiration", auth_req.getExpiration());
+		 editor.commit();
+		 Intent homeIntent = new Intent(FlowLoginActivity.this, FlowHomePageActivity.class);
+		 
+		 homeIntent.putExtra("auth_req", auth_req);
+		 startActivity(homeIntent);
+	}
+
 }

@@ -25,7 +25,7 @@
         android:layout_marginTop="43dp"
         android:ems="10"
         android:hint="@string/login_username"
-        android:text="coursera" >
+        android:text="user1" >
 
         <requestFocus/>
     </EditText>
@@ -39,7 +39,7 @@
         android:ems="10"
         android:hint="@string/login_password"
         android:inputType="textPassword"
-        android:text="changeit" />
+        android:text="pass" />
 
     <TextView
         android:id="@+id/login_result"

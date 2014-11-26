@@ -3,6 +3,9 @@ package tasks;
 import guay.philippe.capstone.FlowCreateQuizActivity;
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.Utils;
+import guay.philippe.capstone.auth.EasyHttpClient;
+import guay.philippe.capstone.data.CompletedQuiz;
+import guay.philippe.capstone.data.Quiz;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -16,8 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Data.CompletedQuiz;
-import Data.Quiz;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -52,10 +53,10 @@ public class TaskCompletedQuiz extends AsyncTask<JSONObject, Void, HttpResponse>
 		HttpPut putReq = null;
 		Log.d("MUTIBO", "TaskCompletedQuiz::doInBackground httpMethod: " + httpMethod);
 		if (httpMethod.equals("post")) {
-			postReq = new HttpPost(strUrl);
+			postReq = Utils.setToken(ctx, new HttpPost(strUrl));
 		}
 		else if (httpMethod.equals("put")) {
-			putReq = new HttpPut(strUrl);
+			putReq = Utils.setToken(ctx, new HttpPut(strUrl));
 		}
 		else {
 			Log.e("MUTIBO", "TaskCompletedQuiz::doInBackground Unknown Http Method: " + httpMethod);
@@ -63,7 +64,7 @@ public class TaskCompletedQuiz extends AsyncTask<JSONObject, Void, HttpResponse>
 		
 		try{
 			Log.d("MUTIBO", "TaskPostCompletedQuiz" + httpMethod + " request");
-			HttpClient client = new DefaultHttpClient();
+			EasyHttpClient client = new EasyHttpClient();
 			
 			StringEntity se = new StringEntity(jsonCompletedQuiz[0].toString(), "UTF-8");
 			se.setContentType("application/json; charset=UTF-8");

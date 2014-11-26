@@ -1,6 +1,9 @@
 package tasks;
 
 import guay.philippe.capstone.R;
+import guay.philippe.capstone.Utils;
+import guay.philippe.capstone.auth.EasyHttpClient;
+import guay.philippe.capstone.detailViews.DetailNewQuizActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -16,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
-import detailViews.DetailNewQuizActivity;
 
 public class TaskVoteQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
 //		private WeakReference<DetailNewQuizActivity> fragmentWeakRef;
@@ -33,13 +35,13 @@ public class TaskVoteQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
 			try{
 				Log.d("MUTIBO", "TaskVoteQuiz::doInBackground PUT request");
 				
-				HttpClient client = new DefaultHttpClient();
+				EasyHttpClient client = new EasyHttpClient();
 				
 				//TODO Try resetting timeout
 				//HttpConnectionParams.setConnectionTimeout(client.getParams(), TIMEOUT_MILLISEC);
 				//HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
 				String strUrl = ctx.getResources().getString(R.string.quiz_base_endpoint);
-				HttpPut put = new HttpPut(strUrl);
+				HttpPut put = Utils.setToken(ctx, new HttpPut(strUrl));
 				
 				StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
 				se.setContentType("application/json; charset=UTF-8");

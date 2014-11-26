@@ -23,10 +23,11 @@
     <string name="title_activity_new_quiz_detail">Mutibo Quiz</string>
     <string name="title_activity_create">Quiz Creation</string>
     <string name="newquiz_intro">New quiz for you to play!</string>
-    <string name="quiz_by_author_endpoint">http://10.0.2.2:8080/quiz/</string>
-    <string name="quiz_by_name_endpoint">http://10.0.2.2:8080/quiz/byname/</string>
-    <string name="quiz_base_endpoint">http://10.0.2.2:8080/quiz/</string>
-    <string name="auth_endpoint">http://10.0.2.2:8080/login/</string>
-    <string name="completedquiz_base_endpoint">http://10.0.2.2:8080/completedquiz/</string>
-    <string name="player_base_endpoint">http://10.0.2.2:8080/player/</string>
+    <string name="quiz_by_author_endpoint">https://10.0.2.2:8443/quiz/</string>
+    <string name="quiz_by_name_endpoint">https://10.0.2.2:8443/quiz/byname/</string>
+    <string name="quiz_base_endpoint">https://10.0.2.2:8443/quiz/</string>
+    <string name="auth_endpoint">https://10.0.2.2:8443/login/</string>
+    <string name="oauth2_endpoint">https://10.0.2.2:8443/oauth/token</string>
+    <string name="completedquiz_base_endpoint">https://10.0.2.2:8443/completedquiz/</string>
+    <string name="player_base_endpoint">https://10.0.2.2:8443/player/</string>
 </resources>

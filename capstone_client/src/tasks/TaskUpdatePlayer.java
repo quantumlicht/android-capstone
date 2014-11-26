@@ -1,6 +1,8 @@
 package tasks;
 
 import guay.philippe.capstone.R;
+import guay.philippe.capstone.Utils;
+import guay.philippe.capstone.auth.EasyHttpClient;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,9 +28,9 @@ public class TaskUpdatePlayer extends AsyncTask<JSONObject, Void, HttpResponse> 
 		
 		try{
 			Log.d("MUTIBO", "TaskUpdatePlayer::doInBackground Player PUT request");
-			HttpClient client = new DefaultHttpClient();
+			EasyHttpClient client = new EasyHttpClient();
 			
-			HttpPut put = new HttpPut(ctx.getResources().getString(R.string.player_base_endpoint));
+			HttpPut put = Utils.setToken(ctx, new HttpPut(ctx.getResources().getString(R.string.player_base_endpoint)));
 			
 			StringEntity se = new StringEntity(jsonPlayer[0].toString(), "UTF-8");
 			se.setContentType("application/json; charset=UTF-8");

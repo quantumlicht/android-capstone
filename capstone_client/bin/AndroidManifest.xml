@@ -37,15 +37,15 @@
             android:label="@string/title_activity_home_page" >
         </activity>
         <activity
-            android:name="detailViews.DetailNewQuizActivity"
+            android:name="guay.philippe.capstone.detailViews.DetailNewQuizActivity"
             android:label="@string/title_activity_new_quiz_detail" >
         </activity>
         <activity
-            android:name="detailViews.DetailCreatedQuizActivity"
+            android:name="guay.philippe.capstone.detailViews.DetailCreatedQuizActivity"
             android:label="@string/title_activity_new_quiz_detail" >
         </activity>
         <activity
-            android:name="detailViews.DetailCompletedQuizActivity"
+            android:name="guay.philippe.capstone.detailViews.DetailCompletedQuizActivity"
             android:label="@string/title_activity_new_quiz_detail" >
         </activity>
         <activity

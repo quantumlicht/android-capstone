@@ -3,6 +3,8 @@ package tasks;
 import guay.philippe.capstone.IApiAccessResponse;
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.Utils;
+import guay.philippe.capstone.auth.EasyHttpClient;
+import guay.philippe.capstone.data.Quiz;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Data.Quiz;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -40,31 +41,33 @@ public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
 		 this.ctx = ctx;
 	}
 	
-	HttpClient mHttpclient = new DefaultHttpClient();
-	HttpGet mHttpGet = new HttpGet(ctx.getResources().getString(R.string.quiz_base_endpoint));
+	
 	
     protected List<Quiz> doInBackground(String... params) {
-		 Log.d("MUTIBO", "GetNewQuizTask Execute HTTP Post Request");
-		 HttpResponse response;
-		 try {
-			response  = mHttpclient.execute(mHttpGet);
-		 } catch (ClientProtocolException e) {
+		EasyHttpClient client = new EasyHttpClient();
+    	
+		HttpGet mHttpGet = Utils.setToken(ctx, new HttpGet(ctx.getResources().getString(R.string.quiz_base_endpoint)));
+		Log.d("MUTIBO", "TaskGetNewQuiz::doInBackground Execute HTTP Post Request");
+		HttpResponse response;
+		try {
+			response  = client.execute(mHttpGet);
+		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 			response = null;
-		 } catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			response = null;
-		 }
-		 return (List<Quiz>) response;
+		}
+		return (List<Quiz>) response;
 	}
 
     protected void onPostExecute(HttpResponse response) {
     	String result = null;
-    	Log.d("MUTIBO", "NewQuizTask::onPostExecute response " + response.toString());
+    	Log.d("MUTIBO", "TaskGetNewQuiz::onPostExecute response " + response.toString());
     	if(delegate!=null)  {
 	   		
 			try {
-				Log.d("MUTIBO", "NewQuizTask::onPostExecute StatusCode " + response.getStatusLine().getStatusCode());
+				Log.d("MUTIBO", "TaskGetNewQuiz::onPostExecute StatusCode " + response.getStatusLine().getStatusCode());
 				result = Utils.inputStreamToString(response.getEntity().getContent()).toString();
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
@@ -77,7 +80,7 @@ public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
            delegate.postResult(Utils.StringtoJSON(result));
         }
     	else {
-            Log.e("ApiAccess", "You have not assigned IApiAccessResponse delegate");
+            Log.e("ApiAccess", "TaskGetNewQuiz::onPostExecute You have not assigned IApiAccessResponse delegate");
         }
     }
     

@@ -1,5 +1,9 @@
 package guay.philippe.capstone;
 
+import guay.philippe.capstone.auth.EasyHttpClient;
+import guay.philippe.capstone.data.Player;
+import guay.philippe.capstone.data.Quiz;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -24,8 +28,6 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
-import Data.Player;
-import Data.Quiz;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -80,6 +82,12 @@ public class FlowCreateQuizActivity extends Activity {
 	private Toast toast;
 	private ArrayList<String> movieSet = new ArrayList<String>();
 	private Quiz mCreatedQuiz;
+	
+	// PUBLIC
+	//--------------------------------------------------------------------
+	
+	// OVERRIDES
+	//--------------------------------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -88,7 +96,7 @@ public class FlowCreateQuizActivity extends Activity {
 		context = getApplicationContext();
 		mSubmit = (Button) findViewById(R.id.submit_create);
 		mTitle = (TextView) findViewById(R.id.quiz_title);
-		mExplanation = (TextView) findViewById(R.id.explanation);
+		mExplanation = (TextView) findViewById(R.id.justification);
 		mMovie1 = (TextView) findViewById(R.id.movie1);
 		mMovie2 = (TextView) findViewById(R.id.movie2);
 		mMovie3 = (TextView) findViewById(R.id.movie3);
@@ -165,7 +173,8 @@ public class FlowCreateQuizActivity extends Activity {
 			}
 		});
 	}
-	
+	// PRIVATE
+	//--------------------------------------------------------------------
 	private void startNewAsyncTask(JSONObject jsonQuiz) {
 		PostCreatedQuizTask asyncTask = new PostCreatedQuizTask(this);
 	    this.asyncTaskWeakRef = new WeakReference<PostCreatedQuizTask >(asyncTask);
@@ -173,6 +182,8 @@ public class FlowCreateQuizActivity extends Activity {
 	    asyncTask.execute(jsonQuiz);
 	}
 	
+	// PRIVATE CLASS
+	//--------------------------------------------------------------------
 	private class PostCreatedQuizTask extends AsyncTask<JSONObject, Void, HttpResponse> {
 		private WeakReference<FlowCreateQuizActivity> fragmentWeakRef;
 		
@@ -186,9 +197,9 @@ public class FlowCreateQuizActivity extends Activity {
 			try{
 				
 				Log.d("MUTIBO", "CreateQuizActivity Quiz POST request");
-				HttpClient client = new DefaultHttpClient();
+				EasyHttpClient client = new EasyHttpClient();
 				String url = getApplicationContext().getResources().getString(R.string.quiz_base_endpoint);
-				HttpPost post = new HttpPost(url);
+				HttpPost post = Utils.setToken(getApplicationContext(), new HttpPost(url));
 				
 				StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
 				se.setContentType("application/json; charset=UTF-8");

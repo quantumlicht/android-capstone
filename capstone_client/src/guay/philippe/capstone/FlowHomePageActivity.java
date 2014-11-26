@@ -8,8 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import Data.Quiz;
-import adapter.AppSectionsPagerAdapter;
 import android.app.FragmentManager;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -40,9 +38,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import fragments.CompletedQuizFragment;
-import fragments.CreatedQuizFragment;
-import fragments.NewQuizFragment;
+import guay.philippe.capstone.adapter.AppSectionsPagerAdapter;
+import guay.philippe.capstone.data.Quiz;
+import guay.philippe.capstone.fragments.CompletedQuizFragment;
+import guay.philippe.capstone.fragments.CreatedQuizFragment;
+import guay.philippe.capstone.fragments.NewQuizFragment;
 
 public class FlowHomePageActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -88,14 +88,13 @@ public class FlowHomePageActivity extends FragmentActivity implements
 		
 		mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(
 				getSupportFragmentManager(), fragments, NUM_ITEMS);
-		mViewPager.setOffscreenPageLimit(4);
+		mViewPager.setOffscreenPageLimit(3);
 		mViewPager.setAdapter(mAppSectionsPagerAdapter);
 		
 		SharedPreferences prefs = Utils.getStorage(getApplicationContext());
 		username = prefs.getString("username", "");
 		score = prefs.getInt("score", 0);
 		SetPlayerInfo(username, score);
-		
 		
 		mMessageReceiver = new BroadcastReceiver() {
 			@Override
@@ -115,33 +114,24 @@ public class FlowHomePageActivity extends FragmentActivity implements
 			}
 		});
 		
-		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						// When swiping between different app sections, select
-						// the corresponding tab.
-						// We can also use ActionBar.Tab#select() to do this if
-						// we have a reference to the
-						// Tab.
-						mActionBar.setSelectedNavigationItem(position);
-					}
-				});
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				mActionBar.setSelectedNavigationItem(position);
+			}
+		});
 
 		// Create a tab listener that is called when the user changes tabs.
 		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 				mViewPager.setCurrentItem(tab.getPosition());
 			}
-
-			public void onTabUnselected(ActionBar.Tab tab,
-					FragmentTransaction ft) {
-				// hide the given tab
+			@Override
+			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 			}
 
-			public void onTabReselected(ActionBar.Tab tab,
-					FragmentTransaction ft) {
-				// probably ignore this event
+			@Override
+			public void onTabReselected(Tab tab, FragmentTransaction ft) {
 			}
 		};
 

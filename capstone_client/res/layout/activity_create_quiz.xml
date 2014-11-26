@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/explanation"
+        android:layout_alignRight="@+id/justification"
         android:layout_marginBottom="42dp"
         android:text="Create" />
 
@@ -125,7 +125,7 @@
         android:text="Difficulty: 3" />
 
     <EditText
-        android:id="@+id/explanation"
+        android:id="@+id/justification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/success"

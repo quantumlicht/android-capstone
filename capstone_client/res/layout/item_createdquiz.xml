@@ -31,17 +31,17 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.25"
-        android:background="#30006a"
+        android:background="#e3e3e3"
         android:minWidth="1dp"
         android:padding="5dp"
         android:text="test"
         android:textSize="16sp" />
-
+    <!-- 
     <Button
         android:id="@+id/sync"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="X" />
-
+    -->
 </LinearLayout>
