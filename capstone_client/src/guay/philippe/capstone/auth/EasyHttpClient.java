@@ -18,6 +18,8 @@ package guay.philippe.capstone.auth;
  * under the License.
  */
 
+import guay.philippe.capstone.data.AuthRequest;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +48,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -66,6 +69,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
+import android.content.Context;
 import android.util.Log;
 
 
@@ -92,7 +96,8 @@ public class EasyHttpClient extends DefaultHttpClient {
 	 * Default http port
 	 */
 	private final static int HTTP_PORT = 8080;
-
+	private Context ctx;
+	private AuthRequest auth;
 	/**
 	 * Default https port
 	 */	
@@ -106,7 +111,7 @@ public class EasyHttpClient extends DefaultHttpClient {
 	 * Default constructor that initializes gzip handling. It adds the 
 	 * Accept-Encoding gzip flag and also decompresses the response from the server. 
 	 */
-	public EasyHttpClient() {
+	public EasyHttpClient() {		
 		addRequestInterceptor(new HttpRequestInterceptor() {
 			public void process(final HttpRequest request,
 					final HttpContext context) throws HttpException, IOException {
@@ -174,10 +179,13 @@ public class EasyHttpClient extends DefaultHttpClient {
 	 * @return the response string, null if there was an error
 	 */
 	public String get(String url) {
-		HttpGet getReq = new HttpGet(url);
+		HttpGet req = new HttpGet(url);
+		//AuthRequest auth = AuthRequest.getCurrentAuthRequest(ctx);
+		//req.addHeader("Authorization", auth.getTokenType() +" " + auth.getAccessToken());
+		
 		InputStream content = null;
 		try {
-			content = execute(getReq).getEntity().getContent();
+			content = execute(req).getEntity().getContent();
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			byte[] buf = new byte[1024];
 			int len;
@@ -197,6 +205,9 @@ public class EasyHttpClient extends DefaultHttpClient {
 	}
 		
 	public String post(HttpPost req){
+		//AuthRequest auth = AuthRequest.getCurrentAuthRequest(ctx);
+		//req.addHeader("Authorization", auth.getTokenType() +" " + auth.getAccessToken());
+		
 		InputStream content = null;
 		try {
 			HttpResponse resp = execute(req);
@@ -221,6 +232,9 @@ public class EasyHttpClient extends DefaultHttpClient {
 	}
 	
 	public String put(HttpPut req){
+		//AuthRequest auth = AuthRequest.getCurrentAuthRequest(ctx);
+		//req.addHeader("Authorization", auth.getTokenType() +" " + auth.getAccessToken());
+		
 		InputStream content = null;
 		try {
 			HttpResponse resp = execute(req);
@@ -244,10 +258,11 @@ public class EasyHttpClient extends DefaultHttpClient {
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		EasyHttpClient client = new EasyHttpClient();
-		System.out.println(client.get("https://encrypted.google.com/"));		
-	}
+	
+//	public static void main(String[] args) {
+//		EasyHttpClient client = new EasyHttpClient();
+//		System.out.println(client.get("https://encrypted.google.com/"));		
+//	}
 }
 
 class GzipEntityWrapper extends HttpEntityWrapper {

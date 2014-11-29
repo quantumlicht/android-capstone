@@ -62,22 +62,32 @@ public class CompletedQuizFragment extends ListFragment {
 				Log.d("MUTIBO", "CompletedQuizFragment::BroadcastReceiver::onReceive received event");
 				Bundle bundle = intent.getExtras();
 				CompletedQuiz q = bundle.getParcelable("completedquiz");
-				mArrayAdapter.addToItemList(q);
+				Boolean replace = bundle.getBoolean("replace");
+				if (replace){
+					mArrayAdapter.replaceItemInList(q);
+				}
+				else{
+					mArrayAdapter.addToItemList(q);
+				}
 				mArrayAdapter.notifyDataSetChanged();
 			}
 		};
+		
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+			      new IntentFilter("quiz-completed"));
+		
   		startNewAsyncTask();
 	}
 
 	//OVERRIDES
 	//--------------------------------------------------------------------
-	@Override
-	public  void onResume(){
-		super.onResume();
-		Log.d("MUTIBO", "NewQuizFragment::onResume registerLocalBroadCastReceiver to event 'get-completedquizzes'");
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
-		      new IntentFilter("quiz-completed"));
-	}
+//	@Override
+//	public  void onResume(){
+//		super.onResume();
+//		Log.d("MUTIBO", "NewQuizFragment::onResume registerLocalBroadCastReceiver to event 'get-completedquizzes'");
+//		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver,
+//		      new IntentFilter("quiz-completed"));
+//	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

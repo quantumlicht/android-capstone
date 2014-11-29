@@ -23,17 +23,6 @@
         android:layout_below="@+id/title"
         android:text="Difficulty:" />
 
-    <TextView
-        android:id="@+id/new_quiz_justification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="invisible" />
-
     <LinearLayout
         android:id="@+id/rating_group"
         android:layout_width="wrap_content"
@@ -75,6 +64,7 @@
 
         <Button
             android:id="@+id/notnow"
+            style="?android:attr/buttonStyleSmall"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -85,67 +75,71 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/new_quiz_justification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@+id/rating_group"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="invisible" />
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/rating_group"
         android:layout_below="@+id/rating_group"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="53dp"
         android:orientation="vertical" >
 
-        <!--  android:background="@drawable/btn_default_holo_light"-->
+        <Button
+            android:id="@+id/new_quiz_movie1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
 
         <Button
-            android:id="@+id/new_quiz_movie1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-        <Button
             android:id="@+id/new_quiz_movie2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Button" />
-        <Button
-            android:id="@+id/new_quiz_movie3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-        <Button
-            android:id="@+id/new_quiz_movie4"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Button"
-             />
-        <!-- 
-        <Button
-            android:id="@+id/new_quiz_movie1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:tag="0"
-            android:text="Button" />
-        
-        <Button
-            android:id="@+id/new_quiz_movie2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:tag="1"
             android:text="Button" />
 
         <Button
             android:id="@+id/new_quiz_movie3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:tag="2"
             android:text="Button" />
 
         <Button
             android:id="@+id/new_quiz_movie4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:tag="3"
             android:text="Button" />
-        -->
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rating_group"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:text="@string/success_text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/rating_group"
+        android:layout_below="@+id/rating_group"
+        android:layout_marginTop="16dp"
+        android:text="@string/new_quiz_intro"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="14sp" />
 
 </RelativeLayout>

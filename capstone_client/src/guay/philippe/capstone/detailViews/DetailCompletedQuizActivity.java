@@ -57,8 +57,8 @@ public class DetailCompletedQuizActivity extends Activity {
 	private Button mMovie2;
 	private Button mMovie3;
 	private Button mMovie4;
+	private TextView mResult;
 	private TextView mJustification;
-	//TODO: Display Answer in text + a visual highlight for correct and wrong answer
 	//private Button mUpvote;
 	//private Button mDownvote;
 	//private Button mNotNow;
@@ -83,11 +83,11 @@ public class DetailCompletedQuizActivity extends Activity {
 		mMovie2 = (Button) findViewById(R.id.completed_quiz_movie2);
 		mMovie3 = (Button) findViewById(R.id.completed_quiz_movie3);
 		mMovie4 = (Button) findViewById(R.id.completed_quiz_movie4);
-		
+		mResult = (TextView) findViewById(R.id.result_completed);
 		mJustification = (TextView) findViewById(R.id.completed_quiz_justification);
 		Button mUpvote = (Button) findViewById(R.id.upvote);
 		Button mDownvote = (Button) findViewById(R.id.downvote);
-		Button mNotNow = (Button) findViewById(R.id.notnow);
+//		Button mNotNow = (Button) findViewById(R.id.notnow);
 		
 		mRatingGroup = (View) findViewById(R.id.rating_group);
 		
@@ -104,11 +104,11 @@ public class DetailCompletedQuizActivity extends Activity {
 						startNewVoteAsyncTask(quiz);
 						mHasVoted = true;
 						break;
-					case R.id.notnow:
+//					case R.id.notnow:
 //						Intent intent = new Intent();
 //						intent.putExtra("Quiz", quiz);
 //						setResult(Activity.RESULT_OK, intent);
-						mHasVoted = false;
+//						mHasVoted = false;
 				}
 				mRatingGroup.setVisibility(View.INVISIBLE);
 				
@@ -122,7 +122,7 @@ public class DetailCompletedQuizActivity extends Activity {
 		if (!mHasVoted) {
 			mUpvote.setOnClickListener(voteListener);
 			mDownvote.setOnClickListener(voteListener);
-			mNotNow.setOnClickListener(voteListener);
+//			mNotNow.setOnClickListener(voteListener);
 		}
 		else {
 			Log.d("MUTIBO", "DetailCompletedQuizActivity::onCreate User has voted, disabling clickListener on voting buttons");
@@ -172,9 +172,11 @@ public class DetailCompletedQuizActivity extends Activity {
 		}
 		if (real_answer == player_answer){
 			mRealAnswer.setBackgroundColor(Color.GREEN);
+			mResult.setText(R.string.success_text);
 		}
 		else {
 			mRealAnswer.setBackgroundColor(Color.GREEN);
+			mResult.setText(R.string.failure_text);
 			mPlayerAnswer.setBackgroundColor(getResources().getColor(R.color.choice_color));
 		}
 	}
@@ -210,54 +212,34 @@ public class DetailCompletedQuizActivity extends Activity {
 				Player p = Player.getCurrentPlayer(getApplicationContext());
 				String strUrl = getResources().getString(R.string.quiz_by_name_endpoint) +  URLEncoder.encode(completedQuiz.getQuizName(), "UTF-8");
 				Log.d("MUTIBO", "DetailCompletedQuizActivity::TaskGetQuizByQuizName CompletedQuiz Url: " + strUrl);
-				HttpGet request = Utils.setToken(getApplicationContext(), new HttpGet());
+				HttpGet request = Utils.setToken(getBaseContext(), new HttpGet());
 				request.setURI(new URI(strUrl));
 				request.addHeader("Content-Type", "application/json");
 				
-//				URL u = new URL(strUrl);
-//				HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-//	            conn.setRequestMethod("GET");
-//	            conn.connect();
-//	            Log.d("MUTIBO", "DetailCompletedQuizActivity::TaskGetQuizByQuizName Getting Connection");
-//	            InputStream is = conn.getInputStream();
-//	            // Read the stream
-//	            byte[] b = new byte[1024];
-//	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//	            while ( is.read(b) != -1)
-//	            baos.write(b);
-//	            String JSONResp = new String(baos.toByteArray());
-//	            JSONArray arr = new JSONArray(JSONResp);
 				response = client.execute(request);
 	            JSONObject obj = new JSONObject(EntityUtils.toString(response.getEntity()));
 	            result = Utils.convertQuiz(obj);
-//	            for (int i=0; i < arr.length(); i++) {
-//	                result.add(Utils.convertCompletedQuiz(arr.getJSONObject(i)));
-//	            }
 	            Log.d("MUTIBO", "DetailCompletedQuizActivity::GetCompletedQuizByQuizNameTask Returning result->" + result.toString());
-//	            conn.disconnect();
+	            
 	        	return result;
 			}
 			catch (Throwable t) {
 				t.printStackTrace();
 			}
-			finally {
-				Log.d("MUTIBO", "Finally Block");
-				return result;
-			}
-
+			return result;
 		}
 		
 		@Override
 		protected void onPostExecute(Quiz q) {
 			quiz = q;
 			ArrayList<String> movieSet = quiz.getMovieSet();
-			mTitle.setText(quiz.getName());
+			mTitle.setText("Title: " + quiz.getName());
 			mDifficulty.setText("Difficulty: " + quiz.getDifficulty());
 			mMovie1.setText(movieSet.get(0));
 			mMovie2.setText(movieSet.get(1));
 			mMovie3.setText(movieSet.get(2));
 			mMovie4.setText(movieSet.get(3));
-			mJustification.setText(quiz.getJustification());
+			mJustification.setText("Justification: " + quiz.getJustification());
 			setAnswers();
 			
 			//super.onPostExecute(result);	

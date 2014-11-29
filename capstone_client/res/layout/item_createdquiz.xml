@@ -16,26 +16,48 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"
+        android:background="#e3e3e3"
+        android:padding="5dp"
+        android:text="Difficulty:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp" />
+
+    <TextView
         android:id="@+id/difficulty_created"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.05"
         android:background="#e3e3e3"
         android:minWidth="1dp"
         android:padding="5dp"
         android:text="test"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"
+        android:background="#e3e3e3"
+        android:padding="5dp"
+        android:text="Rating:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/rating"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.25"
+        android:layout_weight="0.05"
         android:background="#e3e3e3"
         android:minWidth="1dp"
         android:padding="5dp"
         android:text="test"
-        android:textSize="16sp" />
+        android:textSize="14sp" />
     <!-- 
     <Button
         android:id="@+id/sync"

@@ -24,12 +24,15 @@ import guay.philippe.capstone.data.Player;
 import guay.philippe.capstone.data.Quiz;
 import guay.philippe.capstone.detailViews.DetailCreatedQuizActivity;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +48,8 @@ public class CreatedQuizFragment extends ListFragment {
 	List<Quiz> mItemList = new ArrayList<Quiz>();
 	
 	static final int CREATE_QUIZ_REQUEST = 0;
+	static final int UPDATE_DELETE_QUIZ_REQUEST = 1;
+	static final int DELETE_QUIZ_REQUEST = 2;
 	
 	// PUBLIC
 	//--------------------------------------------------------------------
@@ -65,6 +70,7 @@ public class CreatedQuizFragment extends ListFragment {
 	        setRetainInstance(true);
 	        startNewAsyncTask();
 	}
+	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,11 +98,32 @@ public class CreatedQuizFragment extends ListFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == CREATE_QUIZ_REQUEST) {
+        	Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult CREATE");
             if (resultCode == Activity.RESULT_OK) {
             	Quiz q = data.getParcelableExtra("Quiz");
-            	mArrayAdapter.replaceItemInList(q);            	
+            	mArrayAdapter.addToItemList(q);        	
             	mArrayAdapter.notifyDataSetChanged();
             }
+        }
+        else if (requestCode == UPDATE_DELETE_QUIZ_REQUEST) {
+        	Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult UPDATE_DELETE");
+        	if (resultCode == Activity.RESULT_OK) {
+            	Quiz q = data.getParcelableExtra("Quiz");
+            	Boolean toDelete = data.getBooleanExtra("delete", false);
+            	if (toDelete){
+            		Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult deleting quiz");
+            		mArrayAdapter.removeFromItemList(q);
+            	}
+            	else {
+            		Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult updating quiz");
+            		mArrayAdapter.replaceItemInList(q);
+            	}
+            	        	
+            	mArrayAdapter.notifyDataSetChanged();
+            }
+        }
+        else {
+        	Log.d("MUTIBO", "CreatedQuizFragment::onActivityResult requestCode does not match expected codes");
         }
     }
 	
@@ -112,7 +139,7 @@ public class CreatedQuizFragment extends ListFragment {
 	    b.putParcelable("quiz", (Parcelable) q);
 	    
 	    intent.putExtra("quiz", q);
-        startActivity(intent);
+        startActivityForResult(intent, UPDATE_DELETE_QUIZ_REQUEST);
 	}
 	// PRIVATE
 	//----------------------------------------------------------------------------------

@@ -72,17 +72,6 @@
             android:minWidth="10dp"
             android:text="Downvote"
             android:visibility="visible" />
-
-        <Button
-            android:id="@+id/notnow"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:minHeight="10dp"
-            android:minWidth="10dip"
-            android:text="Not Now"
-            android:visibility="visible" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -90,8 +79,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/rating_group"
-        android:layout_marginTop="29dp"
+        android:layout_centerVertical="true"
         android:orientation="vertical" >
 
         <Button
@@ -122,5 +110,14 @@
             android:tag="3"
             android:text="Button" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/result_completed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

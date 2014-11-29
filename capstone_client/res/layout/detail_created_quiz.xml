@@ -17,7 +17,7 @@
         android:text="Please fill in the Quiz title, the movie set, the difficulty,explanation and select the unrelated movie." />
 
     <Button
-        android:id="@+id/submit_create"
+        android:id="@+id/submit_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -26,7 +26,7 @@
         android:text="Update" />
 
     <EditText
-        android:id="@+id/new_quiz_movie4"
+        android:id="@+id/movie4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/movie3"
@@ -42,7 +42,7 @@
         android:id="@+id/movie3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/new_quiz_movie4"
+        android:layout_above="@+id/movie4"
         android:layout_alignLeft="@+id/movie2"
         android:ems="10"
         android:hint="Movie Title #3"
@@ -66,6 +66,9 @@
         android:layout_alignLeft="@+id/movie1"
         android:layout_below="@+id/intro_text"
         android:ems="10"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:hint="Quiz Title"
         android:text="title1" />
 
@@ -73,7 +76,7 @@
         android:id="@+id/unrelated_movie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/success"
+        android:layout_alignLeft="@+id/difficulty"
         android:layout_alignTop="@+id/movie1"
         android:gravity="clip_vertical"
         android:orientation="vertical" >
@@ -106,10 +109,10 @@
     </RadioGroup>
 
     <SeekBar
-        android:id="@+id/success"
+        android:id="@+id/difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/submit_create"
+        android:layout_above="@+id/submit_update"
         android:layout_alignLeft="@+id/intro_text"
         android:contentDescription="Difficulty"
         android:indeterminate="false"
@@ -120,7 +123,7 @@
         android:id="@+id/seekBarValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/success"
+        android:layout_alignTop="@+id/difficulty"
         android:layout_centerHorizontal="true"
         android:text="Difficulty: 3" />
 
@@ -128,8 +131,8 @@
         android:id="@+id/justification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/success"
-        android:layout_alignLeft="@+id/new_quiz_movie4"
+        android:layout_above="@+id/difficulty"
+        android:layout_alignLeft="@+id/movie4"
         android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="Explanation"
@@ -150,9 +153,9 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/submit_create"
-        android:layout_alignBottom="@+id/submit_create"
-        android:layout_alignLeft="@+id/success"
+        android:layout_alignBaseline="@+id/submit_update"
+        android:layout_alignBottom="@+id/submit_update"
+        android:layout_alignLeft="@+id/difficulty"
         android:text="Delete" />
 
 </RelativeLayout>

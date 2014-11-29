@@ -5,10 +5,9 @@ import org.json.JSONObject;
 
 public interface IApiAccessResponse {
 
-	void postResult(JSONObject[] jsonObjects);
-	
-	void postResult(Boolean result);
+	void processResponse(JSONArray arr);
 
-	void postResult(JSONArray arr);
+	void processResponse(JSONObject[] stringtoJSON);
+
 
 }

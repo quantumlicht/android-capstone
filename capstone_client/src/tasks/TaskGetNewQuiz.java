@@ -77,7 +77,7 @@ public class TaskGetNewQuiz extends AsyncTask<String, Void, List<Quiz>> {
 //	       Log.d("MUTIBO", "Response String " + str);
 //	       Boolean result = str.toString().equalsIgnoreCase("true");
 //	       Log.d("MUTIBO", "AsyncTask result " + result);
-           delegate.postResult(Utils.StringtoJSON(result));
+           delegate.processResponse(Utils.StringtoJSON(result));
         }
     	else {
             Log.e("ApiAccess", "TaskGetNewQuiz::onPostExecute You have not assigned IApiAccessResponse delegate");

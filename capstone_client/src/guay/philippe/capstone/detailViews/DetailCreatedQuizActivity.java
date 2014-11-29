@@ -5,16 +5,19 @@ import guay.philippe.capstone.Utils;
 import guay.philippe.capstone.auth.EasyHttpClient;
 import guay.philippe.capstone.data.Player;
 import guay.philippe.capstone.data.Quiz;
+import guay.philippe.capstone.fragments.CreatedQuizFragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
@@ -29,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import tasks.TaskDeleteQuiz;
+
 import com.google.gson.Gson;
 
 import android.app.Activity;
@@ -36,6 +41,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,15 +107,15 @@ public class DetailCreatedQuizActivity extends Activity {
 		Bundle bundle = getIntent().getExtras();
 		createdQuiz = bundle.getParcelable("quiz");
 		
-		mSubmit = (Button) findViewById(R.id.submit_create);
+		mSubmit = (Button) findViewById(R.id.submit_update);
 		mDelete = (Button) findViewById(R.id.delete);
 		mTitle = (TextView) findViewById(R.id.quiz_title);
 		mJustification = (TextView) findViewById(R.id.justification);
 		mMovie1 = (TextView) findViewById(R.id.movie1);
 		mMovie2 = (TextView) findViewById(R.id.movie2);
 		mMovie3 = (TextView) findViewById(R.id.movie3);
-		mMovie4 = (TextView) findViewById(R.id.new_quiz_movie4);
-		mDifficulty = (SeekBar) findViewById(R.id.success);
+		mMovie4 = (TextView) findViewById(R.id.movie4);
+		mDifficulty = (SeekBar) findViewById(R.id.difficulty);
 		mUnrelatedMovieGroup = (RadioGroup) findViewById(R.id.unrelated_movie);
 		
 		difficulty = mDifficulty.getProgress();
@@ -141,6 +147,8 @@ public class DetailCreatedQuizActivity extends Activity {
 			@Override
 			public void onClick(View v){
 				Log.d("MUTIBO", "DetailCreatedQuizActivity::Delete Click listener");
+				TaskDeleteQuiz task = new TaskDeleteQuiz(getBaseContext());
+				task.execute(createdQuiz);
 				//TODO: Add dialog to make sure to delete
 			}
 		});
@@ -183,7 +191,7 @@ public class DetailCreatedQuizActivity extends Activity {
 					
 					Log.d("MUTIBO", "DetailCreatedQuizActivity::onCreate difficulty: " + difficulty);
 					Player p = Player.getCurrentPlayer(getApplicationContext());
-					createdQuiz = new Quiz(title, p.getUsername(), difficulty, justification, unrelatedMovie, movieSet,0);
+					createdQuiz = new Quiz(title, p.getUsername(), difficulty, justification, unrelatedMovie, movieSet,createdQuiz.getRating());
 					
 					JSONObject jsonObj = Utils.QuiztoJSON(createdQuiz);
 					startNewAsyncTask(jsonObj);
@@ -208,7 +216,7 @@ public class DetailCreatedQuizActivity extends Activity {
 		mMovie3.setText(movieSet.get(2));
 		mMovie4.setText(movieSet.get(3));
 		mDifficulty.setProgress(q.getDifficulty() - 1); // 0-based index
-		mSeekBarValue.setText(q.getDifficulty());
+		mSeekBarValue.setText(Integer.toString(q.getDifficulty()));
 		mJustification.setText(q.getJustification());
 		
 		switch(q.getUnrelatedMovie()){
@@ -244,7 +252,7 @@ public class DetailCreatedQuizActivity extends Activity {
 				Log.d("MUTIBO", "DetailCreatedQuizActivity Quiz PUT request");
 				EasyHttpClient client = new EasyHttpClient();
 				String url = getApplicationContext().getResources().getString(R.string.quiz_base_endpoint);
-				HttpPut put = Utils.setToken(getApplicationContext(), new HttpPut(url));
+				HttpPut put = Utils.setToken(getBaseContext(), new HttpPut(url));
 				
 				StringEntity se = new StringEntity(jsonQuiz[0].toString(), "UTF-8");
 				se.setContentType("application/json; charset=UTF-8");
@@ -266,16 +274,73 @@ public class DetailCreatedQuizActivity extends Activity {
 		protected void onPostExecute(HttpResponse response) {
     			//super.onPostExecute(result);
 				//mArrayAdapter.setItemList(result);
-				Boolean res = response.getStatusLine().getStatusCode() == 200;
-				if (res){
-					Intent intent = new Intent();
-					intent.putExtra("Quiz", createdQuiz);
-					setResult(Activity.RESULT_OK, intent);
-					Log.d("MUTIBO", "DetailCreatedQuizActivity::onPostExecute Successfully created quiz");
-					finish();
-				}
-				//mArrayAdapter.notifyDataSetChanged();
+			Log.d("MUTIBO", "DetailCreatedQuizActivity::onPostExecute");
+			Log.d("MUTIBO", "DetailCreatedQuizActivity::onPostExecute statusCode: " +  response.getStatusLine().getStatusCode());
+			Boolean res = response.getStatusLine().getStatusCode() == 200;
+			Log.d("MUTIBO", "DetailCreatedQuizActivity::onPostExecute statusCode: " +  (response.getStatusLine().getStatusCode()==200));
+			if (res){
+				Intent intent = new Intent();
+				intent.putExtra("Quiz", createdQuiz);
+				setResult(Activity.RESULT_OK, intent);
+				Log.d("MUTIBO", "DetailCreatedQuizActivity::onPostExecute Successfully created quiz");
+				finish();
+			}
+			//mArrayAdapter.notifyDataSetChanged();
 		}
+	}
+	
+	private class TaskDeleteQuiz extends AsyncTask<Quiz, Void, HttpResponse> {
+		private Context ctx;
+		
+		public TaskDeleteQuiz (Context ctx) {
+		   this.ctx = ctx;
+		}
+		
+		@Override
+		protected HttpResponse doInBackground(Quiz... quizzes) {
+			HttpResponse response = null;
+			
+			try{
+				Log.d("MUTIBO", "TaskDeleteQuiz::doInBackground Quiz DELETE request");
+				EasyHttpClient client = new EasyHttpClient();
+				String strUrl = ctx.getResources().getString(R.string.quiz_base_endpoint) +  URLEncoder.encode(quizzes[0].getName(), "UTF-8");
+				HttpDelete delete = Utils.setToken(ctx, new HttpDelete(strUrl));
+				response = client.execute(delete);
+				
+				Log.d("MUTIBO", "TaskDeleteQuiz::doInBackground Server Response " + response.getStatusLine().getStatusCode());
+			}
+			catch (Throwable t){
+				t.printStackTrace();
+			}
+			return response;
+		}
+		
+		@Override
+		protected void onPostExecute(HttpResponse response) {
+			//super.onPostExecute(result);
+			//mArrayAdapter.setItemList(result);
+//			Intent intent = new Intent (getApplicationContext(), CreatedQuizFragment.class);
+//			startActivity(intent);
+			Log.d("MUTIBO", "TaskDeleteQuiz::onPostExecute Status: " + response.getStatusLine());
+			
+			Intent intent = new Intent();
+			intent.putExtra("Quiz", createdQuiz);
+			intent.putExtra("deleted", true);
+			setResult(Activity.RESULT_OK, intent);
+			
+			Log.d("MUTIBO", "TaskDeleteQuiz::onPostExecute Successfully deleted quiz");
+			
+//			Intent intent = new Intent("deleted-quiz");
+//			intent.putExtra("deletedQuiz", quiz);
+//			Log.d("MUTIBO", "TaskDeleteQuiz::onPostExecute Broadcasting event: 'd-player'");
+//			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+			
+			finish();
+			return;
+			
+			//Boolean res = response.getStatusLine().getStatusCode() == 200;		
+		}
+		
 	}
 	
 }

@@ -94,14 +94,14 @@ public class FlowCreateQuizActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_quiz);
 		context = getApplicationContext();
-		mSubmit = (Button) findViewById(R.id.submit_create);
+		mSubmit = (Button) findViewById(R.id.submit_update);
 		mTitle = (TextView) findViewById(R.id.quiz_title);
 		mExplanation = (TextView) findViewById(R.id.justification);
 		mMovie1 = (TextView) findViewById(R.id.movie1);
 		mMovie2 = (TextView) findViewById(R.id.movie2);
 		mMovie3 = (TextView) findViewById(R.id.movie3);
-		mMovie4 = (TextView) findViewById(R.id.new_quiz_movie4);
-		mDifficulty = (SeekBar) findViewById(R.id.success);
+		mMovie4 = (TextView) findViewById(R.id.movie4);
+		mDifficulty = (SeekBar) findViewById(R.id.difficulty);
 		mUnrelatedMovieGroup = (RadioGroup) findViewById(R.id.unrelated_movie);
 		
 		difficulty = mDifficulty.getProgress();
@@ -138,24 +138,24 @@ public class FlowCreateQuizActivity extends Activity {
 				movie4 = mMovie4.getText().toString();
 				unrelatedMovieGroupId = mUnrelatedMovieGroup.getCheckedRadioButtonId();
 				mUnrelatedMovie = (RadioButton) findViewById(unrelatedMovieGroupId);
-				unrelatedMovie = Integer.valueOf(mUnrelatedMovie.getText().toString());
+				unrelatedMovie = Integer.valueOf(mUnrelatedMovie.getTag().toString());
 
-				if ( title == "") {
+				if ( title.isEmpty()) {
 					CharSequence text = "You need to define a title";
 					toast = Toast.makeText(context, text, toast_duration);
 					toast.show();
 				}				
-				else if (explanation == "" ) {
+				else if (explanation.isEmpty()) {
 					CharSequence text = "You need to provide an explanation";
 					toast = Toast.makeText(context, text, toast_duration);
 					toast.show();
 				}
-				else if ( movie1 == "" || movie2 == "" || movie3 == "" || movie4 == "") {
+				else if ( movie1.isEmpty() || movie2.isEmpty() || movie3.isEmpty() || movie4.isEmpty() ) {
 					CharSequence text = "You need to provide a complete movie set";
 					toast = Toast.makeText(context, text, toast_duration);
 					toast.show();
 				}
-				else{
+				else {
 					Log.d("MUTIBO", "FlowCreateQuizActivity::mSubmit.setOnClickListener Valid Quiz. Sending to server");
 					
 					movieSet.add(movie1);
@@ -178,7 +178,7 @@ public class FlowCreateQuizActivity extends Activity {
 	private void startNewAsyncTask(JSONObject jsonQuiz) {
 		PostCreatedQuizTask asyncTask = new PostCreatedQuizTask(this);
 	    this.asyncTaskWeakRef = new WeakReference<PostCreatedQuizTask >(asyncTask);
-	    Log.d("MUTIBO", "CreatedQuizFragment::startNewAsyncTask executing task");
+	    Log.d("MUTIBO", "FlowCreateQuizActivity::startNewAsyncTask executing task");
 	    asyncTask.execute(jsonQuiz);
 	}
 	
@@ -188,7 +188,8 @@ public class FlowCreateQuizActivity extends Activity {
 		private WeakReference<FlowCreateQuizActivity> fragmentWeakRef;
 		
 		 private PostCreatedQuizTask (FlowCreateQuizActivity activity) {
-	            this.fragmentWeakRef = new WeakReference<FlowCreateQuizActivity>(activity);
+			Log.d("MUTIBO", "PostCreatedQuizTask::PostCreatedQuizTask");
+            this.fragmentWeakRef = new WeakReference<FlowCreateQuizActivity>(activity);
         }
 		
 		@Override
@@ -196,7 +197,7 @@ public class FlowCreateQuizActivity extends Activity {
 			HttpResponse response = null;
 			try{
 				
-				Log.d("MUTIBO", "CreateQuizActivity Quiz POST request");
+				Log.d("MUTIBO", "FlowCreateQuizActivity::doInBackground Quiz POST request");
 				EasyHttpClient client = new EasyHttpClient();
 				String url = getApplicationContext().getResources().getString(R.string.quiz_base_endpoint);
 				HttpPost post = Utils.setToken(getApplicationContext(), new HttpPost(url));
@@ -222,9 +223,9 @@ public class FlowCreateQuizActivity extends Activity {
 		
 		@Override
 		protected void onPostExecute(HttpResponse response) {
-    			//super.onPostExecute(result);
+//    			super.onPostExecute(response);
 				//mArrayAdapter.setItemList(result);
-				Log.d("MUTIBO", "CreateQuizActivity::onPostExecute");
+				Log.d("MUTIBO", "FlowCreateQuizActivity::onPostExecute");
 				Boolean res = response.getStatusLine().getStatusCode() == 201;
 				if (res){
 					Intent intent = new Intent();

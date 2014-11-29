@@ -16,34 +16,13 @@
         android:layout_height="wrap_content"
         android:text="Please fill in the Quiz title, the movie set, the difficulty,explanation and select the unrelated movie." />
 
-    <Button
-        android:id="@+id/submit_create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/justification"
-        android:layout_marginBottom="42dp"
-        android:text="Create" />
-
-    <EditText
-        android:id="@+id/new_quiz_movie4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/movie3"
-        android:layout_centerVertical="true"
-        android:ems="10"
-        android:hint="Movie Title #4"
-        android:text="movie4" >
-
-        <requestFocus />
-    </EditText>
-
     <EditText
         android:id="@+id/movie3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/new_quiz_movie4"
+        android:layout_above="@+id/movie4"
         android:layout_alignLeft="@+id/movie2"
+        android:layout_alignParentRight="true"
         android:ems="10"
         android:hint="Movie Title #3"
         android:text="movie3" />
@@ -53,8 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/movie3"
-        android:layout_alignRight="@+id/intro_text"
-        android:layout_marginRight="15dp"
+        android:layout_alignParentRight="true"
         android:ems="10"
         android:hint="Movie Title #2"
         android:text="movie2" />
@@ -64,53 +42,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/movie1"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/intro_text"
         android:ems="10"
         android:hint="Quiz Title"
         android:text="title1" />
 
-    <RadioGroup
-        android:id="@+id/unrelated_movie"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/success"
-        android:layout_alignTop="@+id/movie1"
-        android:gravity="clip_vertical"
-        android:orientation="vertical" >
-
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1" />
-
-        <RadioButton
-            android:id="@+id/radio2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2" />
-
-        <RadioButton
-            android:id="@+id/radio3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="3" />
-
-        <RadioButton
-            android:id="@+id/radio4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="4" />
-    </RadioGroup>
-
     <SeekBar
-        android:id="@+id/success"
+        android:id="@+id/difficulty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/submit_create"
-        android:layout_alignLeft="@+id/intro_text"
+        android:layout_above="@+id/submit_update"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:contentDescription="Difficulty"
         android:indeterminate="false"
         android:max="4"
@@ -120,7 +64,7 @@
         android:id="@+id/seekBarValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/success"
+        android:layout_alignTop="@+id/difficulty"
         android:layout_centerHorizontal="true"
         android:text="Difficulty: 3" />
 
@@ -128,8 +72,9 @@
         android:id="@+id/justification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/success"
-        android:layout_alignLeft="@+id/new_quiz_movie4"
+        android:layout_above="@+id/difficulty"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="Explanation"
@@ -141,8 +86,70 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/movie2"
         android:layout_alignLeft="@+id/movie2"
+        android:layout_alignParentRight="true"
         android:ems="10"
         android:hint="Movie Title #1"
         android:text="movie1" />
+
+    <RadioGroup
+        android:id="@+id/unrelated_movie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/movie4"
+        android:layout_alignLeft="@+id/justification"
+        android:gravity="clip_vertical"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/radio1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="1"
+            android:text="#1" />
+
+        <RadioButton
+            android:id="@+id/radio2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="2"
+            android:text="#2" />
+
+        <RadioButton
+            android:id="@+id/radio3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:tag="3"
+            android:text="#3" />
+
+        <RadioButton
+            android:id="@+id/radio4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:tag="4"
+            android:text="#4" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/submit_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/difficulty"
+        android:layout_marginBottom="30dp"
+        android:text="Create" />
+
+    <EditText
+        android:id="@+id/movie4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/justification"
+        android:layout_alignLeft="@+id/movie3"
+        android:layout_marginBottom="17dp"
+        android:ems="10"
+        android:hint="Movie Title #4"
+        android:text="movie4" />
 
 </RelativeLayout>

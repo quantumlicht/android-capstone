@@ -51,6 +51,8 @@ public class TaskAuthenticate extends AsyncTask<String, Integer, JSONArray> {
 //	private HttpClient mHttpclient = UnsafeHttpsClient.getNewHttpClient();
 	private HttpPost mHttppost;
 	private String client_string = "mobile:";
+	
+	
 	public TaskAuthenticate (Context ctx) {
 		this.ctx = ctx;
 	}
@@ -70,6 +72,7 @@ public class TaskAuthenticate extends AsyncTask<String, Integer, JSONArray> {
 			 nameValuePairs.add(new BasicNameValuePair("grant_type", "password"));
 			 nameValuePairs.add(new BasicNameValuePair("client_id", "mobile"));
 			 nameValuePairs.add(new BasicNameValuePair("client_secret",""));
+			 
 			 // NO_WRAP bitmask is important because post request should not have end of line characters in header. For get requests it is ok..
 			 String header = "Basic " + Base64.encodeToString(client_string.getBytes("UTF-8"), Base64.URL_SAFE|Base64.NO_WRAP);
 			mHttppost.setHeader("Authorization", header);
@@ -123,7 +126,7 @@ public class TaskAuthenticate extends AsyncTask<String, Integer, JSONArray> {
     protected void onPostExecute(JSONArray response) {
     	String result = null;
     	if(delegate!=null)  {
-			delegate.postResult(response);
+			delegate.processResponse(response);
         }
     	else {
             Log.e("ApiAccess", "You have not assigned IApiAccessResponse delegate");

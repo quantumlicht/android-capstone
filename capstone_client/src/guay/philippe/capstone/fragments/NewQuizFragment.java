@@ -180,7 +180,7 @@ public class NewQuizFragment extends ListFragment {
 	    		for (Iterator<CompletedQuiz> iter = compQuizzes.listIterator(); iter.hasNext(); ) {
 		    		CompletedQuiz compQ = iter.next();
 		    		if (compQ.getQuizName().equals(q.getName())) {
-		    			//Log.d("MUTIBO", "NewQuizFragment::filterQuizForUser removing quiz because it's completed");
+		    			Log.d("MUTIBO", "NewQuizFragment::filterQuizForUser removing quiz because it's completed");
 		    			iterQ.remove();
 		    		}
 		    	}

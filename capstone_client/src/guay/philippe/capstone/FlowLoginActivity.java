@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.*;
@@ -83,15 +86,9 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 				postLoginData();
 			}
 		});
-//		}
 	}
 
-	@Override
-	public void postResult(JSONObject[] res){
 
-    }
-
-	
 	private void postLoginData() {
 		if (!autologin) {
 			TextView uname = (TextView) findViewById(R.id.player_name);
@@ -106,14 +103,11 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 		authObj.execute(mUsername, mPassword);
 	}
 
-	@Override
-	public void postResult(Boolean result) {
-	}
 
 	@Override
-	public void postResult(JSONArray arr) {
-		Log.d("MUTIBO", "FlowLoginActivity::postResult arr: " + arr.length());
-		Log.d("MUTIBO", "FlowLoginActivity::postResult arr: " + arr.optJSONObject(0));
+	public void processResponse(JSONArray arr) {
+		Log.d("MUTIBO", "FlowLoginActivity::processResponse arr: " + arr.length());
+		Log.d("MUTIBO", "FlowLoginActivity::processResponse arr: " + arr.optJSONObject(0));
 		AuthRequest auth_req = null;
 		try {
 			auth_req = Utils.convertAuthRequest(arr.getJSONObject(0));
@@ -121,7 +115,7 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 			e.printStackTrace();
 		}
 		
-		Log.d("MUTIBO", "FlowLoginActivity::postResult token: " + auth_req.getAccessToken());
+		Log.d("MUTIBO", "FlowLoginActivity::processResponse token: " + auth_req.getAccessToken());
 		//	mLoginResult.setText("Login successful");
 		 SharedPreferences prefs = Utils.getStorage(ctx);
 		 SharedPreferences.Editor editor = prefs.edit();
@@ -131,11 +125,18 @@ public class FlowLoginActivity extends Activity implements IApiAccessResponse {
 		 editor.putString("access_token", auth_req.getAccessToken());
 		 editor.putString("token_type", auth_req.getTokenType());
 		 editor.putInt("expiration", auth_req.getExpiration());
+		 editor.putLong("expiration_date", auth_req.getExpirationDate());
+		 
 		 editor.commit();
 		 Intent homeIntent = new Intent(FlowLoginActivity.this, FlowHomePageActivity.class);
 		 
 		 homeIntent.putExtra("auth_req", auth_req);
 		 startActivity(homeIntent);
+	}
+
+
+	@Override
+	public void processResponse(JSONObject[] stringtoJSON) {
 	}
 
 }

@@ -55,6 +55,7 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 	private Button mMovie2;
 	private Button mMovie3;
 	private Button mMovie4;
+	private TextView mResult;
 	private Button mUpvote;
 	private Button mDownvote;
 	private Button mNotNow;
@@ -82,6 +83,7 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 		mMovie2 = (Button) findViewById(R.id.new_quiz_movie2);
 		mMovie3 = (Button) findViewById(R.id.new_quiz_movie3);
 		mMovie4 = (Button) findViewById(R.id.new_quiz_movie4);
+		mResult = (TextView) findViewById(R.id.result_text);
 		
 		mJustification = (TextView) findViewById(R.id.new_quiz_justification);
 		mUpvote = (Button) findViewById(R.id.upvote);
@@ -164,25 +166,25 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
    			case R.id.new_quiz_movie1:
    				movieAnswered = 1;
    				hasRightAnswer = quiz.getUnrelatedMovie()==1;
-   				animateButton(hasRightAnswer, mMovie1);
+   				animateQuiz(hasRightAnswer, mMovie1);
    				break;
    			case R.id.new_quiz_movie2:
    				movieAnswered = 2;
    				hasRightAnswer = quiz.getUnrelatedMovie()==2;
-   				animateButton(hasRightAnswer, mMovie2);
+   				animateQuiz(hasRightAnswer, mMovie2);
    				break;
    			case R.id.new_quiz_movie3:
    				movieAnswered = 3;
    				hasRightAnswer = quiz.getUnrelatedMovie()==3;
-   				animateButton(hasRightAnswer, mMovie3);
+   				animateQuiz(hasRightAnswer, mMovie3);
    				break;
        		case R.id.new_quiz_movie4:
        			movieAnswered = 4;
        			hasRightAnswer = quiz.getUnrelatedMovie()==4;
-   				animateButton(hasRightAnswer, mMovie4);
+   				animateQuiz(hasRightAnswer, mMovie4);
        			break;
 		}
-		if (success) {
+		if (hasRightAnswer) {
 			updateAndPublishPlayerScoreUpdate();
 		}
 		
@@ -199,7 +201,7 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 	}
 	
 	// PRIVATE
-	private void animateButton(boolean success, final Button button){
+	private void animateQuiz(boolean success, final Button button){
 		
 		//StateListDrawable draw = mAnswer.getBackground();
 		//draw.getState();
@@ -212,6 +214,8 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 		colorAnimationFail.setDuration(1500);
 		colorAnimationSuccess.setDuration(1500);
 		if (success) {
+			mResult.setText(R.string.success_text);
+			
 			colorAnimationSuccess.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 			    @Override
 			    public void onAnimationUpdate(ValueAnimator animator) {
@@ -221,6 +225,8 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 			colorAnimationSuccess.start();
 		}
 		else{
+			mResult.setText(R.string.failure_text);
+			
 			colorAnimationFail.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 			    @Override
 			    public void onAnimationUpdate(ValueAnimator animator) {
@@ -239,6 +245,7 @@ public class DetailNewQuizActivity extends Activity implements View.OnClickListe
 			colorAnimationSuccess.start();
 			colorAnimationFail.start();
 		}
+		mResult.setVisibility(View.VISIBLE);
 	}
 	
     //--------------------------------------------------------------------------

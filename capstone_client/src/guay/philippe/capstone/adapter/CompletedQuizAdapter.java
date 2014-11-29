@@ -63,7 +63,6 @@ public class CompletedQuizAdapter extends ArrayAdapter<CompletedQuiz>{
 			TextView quizNameTv = (TextView) v.findViewById(R.id.quiz_name_completed);
 			TextView successTv = (TextView) v.findViewById(R.id.success);
 			quizNameTv.setText(q.getQuizName());
-			
 			String successText;
 			if (q.getSuccess()){
 				successText = "Success";
@@ -84,6 +83,18 @@ public class CompletedQuizAdapter extends ArrayAdapter<CompletedQuiz>{
 	  
 	  public List<CompletedQuiz> getItemList(){
 		  return itemList;
+	  }
+	  
+	  public void replaceItemInList(CompletedQuiz q) {
+		  int i=0;
+		  for (Iterator<CompletedQuiz> iter = itemList.listIterator(); iter.hasNext(); i++ ) {
+			    CompletedQuiz compq = iter.next();
+			    if (compq.getQuizName().equals(q.getQuizName())) {
+			    	Log.d("MUTIBO", "CompletedQuizAdapter::replaceItemInList found elem to replace");
+			    	itemList.set(i, q);
+			    }
+		  }
+		  Log.d("MUTIBO", "QuizAdapter::replaceItemInList replacing Quiz: " + q.toString() + " from itemList");
 	  }
 	  
 	  public void removeFromItemList(CompletedQuiz q) {

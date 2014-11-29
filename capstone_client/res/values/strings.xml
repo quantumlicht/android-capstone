@@ -14,7 +14,6 @@
     <string name="register_password2">Please validate your password</string>
     <string name="register_submit">Register</string>
     <string name="title_activity_login">Login</string>
-    <string name="hello_world">Hello world!</string>
     <string name="login_intro">Log into the Mutibo App!</string>
     <string name="login_username">Enter your Username</string>
     <string name="login_password">Enter your Password</string>
@@ -30,4 +29,7 @@
     <string name="oauth2_endpoint">https://10.0.2.2:8443/oauth/token</string>
     <string name="completedquiz_base_endpoint">https://10.0.2.2:8443/completedquiz/</string>
     <string name="player_base_endpoint">https://10.0.2.2:8443/player/</string>
+    <string name="success_text">You got it right!</string>
+    <string name="failure_text">You got it wrong ...</string>
+    <string name="new_quiz_intro">Pick the movie that is not related to the others</string>
 </resources>

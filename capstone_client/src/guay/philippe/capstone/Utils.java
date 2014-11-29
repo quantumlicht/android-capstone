@@ -8,6 +8,7 @@ import guay.philippe.capstone.data.Quiz;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -156,7 +157,7 @@ public class Utils {
 	
 	//-----------------------------------------------------------------------
 	public static SharedPreferences getStorage(Context ctx){
-		return ctx.getSharedPreferences(STORAGE_FILE, 0);
+		return ctx.getSharedPreferences(STORAGE_FILE, Context.MODE_PRIVATE);
 	}
 	
 	public static HttpPost setToken(Context ctx, HttpPost req){
@@ -166,7 +167,6 @@ public class Utils {
 		return req;
 	}
 	
-	//TODO: Check token validity or else request a new one.
 	public static HttpPut setToken(Context ctx, HttpPut req){
 		AuthRequest auth = AuthRequest.getCurrentAuthRequest(ctx);
 		Log.d("MUTIBO", "Utils::setToken tokentype: " + auth.getTokenType() + " token: " + auth.getAccessToken());
@@ -187,5 +187,36 @@ public class Utils {
 		req.addHeader("Authorization", auth.getTokenType() +" " + auth.getAccessToken());
 		return req;
 	}
+
+	public static void clearStorageAndCache(Context applicationContext) {
+		SharedPreferences prefs = Utils.getStorage(applicationContext);
+		prefs.edit().clear().commit();	
+		clearCache(applicationContext);
+	}
+
+	private static void clearCache(Context context) {
+      try {
+         File dir = context.getCacheDir();
+         if (dir != null && dir.isDirectory()) {
+            deleteDir(dir);
+         }
+      } catch (Exception e) {
+      }
+   }
+
+   private static boolean deleteDir(File dir) {
+      if (dir != null && dir.isDirectory()) {
+         String[] children = dir.list();
+         for (int i = 0; i < children.length; i++) {
+            boolean success = deleteDir(new File(dir, children[i]));
+            if (!success) {
+               return false;
+            }
+         }
+      }
+
+      // The directory is now empty so delete it
+      return dir.delete();
+   }
 	
 }

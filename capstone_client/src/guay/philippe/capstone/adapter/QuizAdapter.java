@@ -54,30 +54,27 @@ public class QuizAdapter extends ArrayAdapter<Quiz>{
 	  @Override
 	  public void notifyDataSetChanged() {
 	      //TODO: Sort by rating order
-		  
 	      super.notifyDataSetChanged();
 	  }
 	  
 	  @Override 
 	  public View getView(int position, View convertView, ViewGroup parent) {
-		  
+		  	
 		  	View v = convertView;
 		  	Quiz q = itemList.get(position);
-		  	if (convertView == null) {
-		        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		        if (mItemListTemplate =="createdQuiz") {
-		        	v = inflater.inflate(R.layout.item_createdquiz, null);
-		        	setContentForCreatedQuiz(v, q);
-		        }
-		        else if (mItemListTemplate =="newQuiz"){
-		        	v = inflater.inflate(R.layout.item_newquiz, null);
-		        	setContentForNewQuiz(v, q);
-		        }
-		        else{
-		        	v = inflater.inflate(R.layout.item_newquiz, null);
-		        	setContentForNewQuiz(v, q);
-		        }
-	  		}
+	        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	        if (mItemListTemplate =="createdQuiz") {
+	        	v = inflater.inflate(R.layout.item_createdquiz, null);
+	        	setContentForCreatedQuiz(v, q);
+	        }
+	        else if (mItemListTemplate =="newQuiz"){
+	        	v = inflater.inflate(R.layout.item_newquiz, null);
+	        	setContentForNewQuiz(v, q);
+	        }
+	        else{
+	        	v = inflater.inflate(R.layout.item_newquiz, null);
+	        	setContentForNewQuiz(v, q);
+	        }
 			return v; 
 	  }
 	  
@@ -127,7 +124,7 @@ public class QuizAdapter extends ArrayAdapter<Quiz>{
 			
 		  nameTv.setText(q.getName());
 		  authorTv.setText("by: " + q.getAuthor());
-		  difficultyTv.setText("(" + Integer.toString(q.getDifficulty()) + ")");
+		  difficultyTv.setText(Integer.toString(q.getDifficulty()));
 	  }
 	  
 	  private void setContentForCreatedQuiz(View v, Quiz q){
@@ -136,13 +133,12 @@ public class QuizAdapter extends ArrayAdapter<Quiz>{
 		  TextView difficultyTv = (TextView) v.findViewById(R.id.difficulty_created);
 		  nameTv.setText(q.getName());
 		  ratingTv.setText(Integer.toString(q.getRating()));
-		  Log.d("MUTIBO", "QuizAdapter::setContentForCreatedQuiz quiz rating: " + q.getRating());
 		  if (q.getRating() < 0) {
 			  ratingTv.setBackgroundColor(Color.RED);
 		  }
 		  else {
 			  ratingTv.setBackgroundColor(Color.GREEN);
 		  }
-		  difficultyTv.setText("(" + Integer.toString(q.getDifficulty()) + ")");
+		  difficultyTv.setText(Integer.toString(q.getDifficulty()));
 	  }
 	}

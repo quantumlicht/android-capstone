@@ -1,8 +1,11 @@
 package tasks;
 
+import java.net.URLEncoder;
+
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.Utils;
 import guay.philippe.capstone.auth.EasyHttpClient;
+import guay.philippe.capstone.data.Quiz;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,7 +19,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class TaskDeleteQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
+public class TaskDeleteQuiz extends AsyncTask<Quiz, Void, HttpResponse> {
 	private Context ctx;
 	
 	public TaskDeleteQuiz (Context ctx) {
@@ -24,15 +27,16 @@ public class TaskDeleteQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
 	}
 	
 	@Override
-	protected HttpResponse doInBackground(JSONObject... jsonPlayer) {
+	protected HttpResponse doInBackground(Quiz... quizzes) {
 		HttpResponse response = null;
 		
 		try{
-			Log.d("MUTIBO", "TaskDeleteQuiz::doInBackground Player PUT request");
+			Log.d("MUTIBO", "TaskDeleteQuiz::doInBackground Quiz DELETE request");
 			EasyHttpClient client = new EasyHttpClient();
-			
-			HttpDelete delete = Utils.setToken(ctx, new HttpDelete(ctx.getResources().getString(R.string.quiz_base_endpoint)));
+			String strUrl = ctx.getResources().getString(R.string.quiz_base_endpoint) +  URLEncoder.encode(quizzes[0].getName(), "UTF-8");
+			HttpDelete delete = Utils.setToken(ctx, new HttpDelete(strUrl));
 			response = client.execute(delete);
+			
 			Log.d("MUTIBO", "TaskDeleteQuiz::doInBackground Server Response " + response.getStatusLine().getStatusCode());
 		}
 		catch (Throwable t){

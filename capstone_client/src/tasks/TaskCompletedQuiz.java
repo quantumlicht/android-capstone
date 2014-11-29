@@ -1,11 +1,9 @@
 package tasks;
 
-import guay.philippe.capstone.FlowCreateQuizActivity;
 import guay.philippe.capstone.R;
 import guay.philippe.capstone.Utils;
 import guay.philippe.capstone.auth.EasyHttpClient;
 import guay.philippe.capstone.data.CompletedQuiz;
-import guay.philippe.capstone.data.Quiz;
 
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -15,7 +13,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,8 +21,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-
 
 
 public class TaskCompletedQuiz extends AsyncTask<JSONObject, Void, HttpResponse> {
@@ -86,10 +81,7 @@ public class TaskCompletedQuiz extends AsyncTask<JSONObject, Void, HttpResponse>
 		catch (Throwable t){
 			t.printStackTrace();
 		}
-		finally {
-			Log.d("MUTIBO", "TaskPostCompletedQuiz Finally Block");
-			return response;
-		}
+		return response;
 	}
 	
 	@Override
@@ -99,7 +91,8 @@ public class TaskCompletedQuiz extends AsyncTask<JSONObject, Void, HttpResponse>
 		Log.d("MUTIBO", "TaskUpdatTaskPostCompletedQuiz::onPostExecute Status: " + response.getStatusLine());
 		Intent intent = new Intent("quiz-completed");
 		intent.putExtra("completedquiz", compQ);
-		Log.d("MUTIBO", "DetailNewQuizActivity::publishQuizCompletion Broadcasting event: 'quiz-completed'");
+		intent.putExtra("replace", httpMethod.equals("put"));
+		Log.d("MUTIBO", "DetailNewQuizActivity::onPostExecute Broadcasting event: 'quiz-completed'");
 		LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
 		
 		//Boolean res = response.getStatusLine().getStatusCode() == 200;		

@@ -62,8 +62,8 @@ public class FlowHomePageActivity extends FragmentActivity implements
 	private NewQuizFragment newQuizFrag = NewQuizFragment.newInstance();
 	private CreatedQuizFragment createdQuizFrag = CreatedQuizFragment.newInstance();
 		
-	private String[] tabNames = { "New Quizzes", "Completed Quizzes",
-			"Created Quizzes" };
+	private String[] tabNames = {"New Quizzes", "Completed Quizzes",
+			"Created Quizzes"};
 	
 	static final int NUM_ITEMS = 3;
 	//PUBLIC
@@ -101,6 +101,7 @@ public class FlowHomePageActivity extends FragmentActivity implements
 			public void onReceive(Context context, Intent intent){
 				username = intent.getStringExtra("username");
 				score = intent.getIntExtra("score", 0);
+				Log.d("MUTIBO", "FlowHomePageActivity::MessageReceiver username: " + username + " score: " + score);
 				SetPlayerInfo(username, score);
 			}
 		};
@@ -108,9 +109,7 @@ public class FlowHomePageActivity extends FragmentActivity implements
 		mButtonSync.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				completedQuizFrag.refresh();
-				newQuizFrag.refresh();
-				createdQuizFrag.refresh();
+				sync();
 			}
 		});
 		
@@ -179,7 +178,7 @@ public class FlowHomePageActivity extends FragmentActivity implements
 	public void onResume() {
 	  super.onResume();
 	  // Register mMessageReceiver to receive messages.
-	  Log.d("MUTIBO", "FlowHomePageActivity::onResume registerLocalBroadCastReceiver to event 'update-plater'");
+	  Log.d("MUTIBO", "FlowHomePageActivity::onResume registerLocalBroadCastReceiver to event 'update-player'");
 	  LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
 	      new IntentFilter("update-player"));
 	}
@@ -188,95 +187,19 @@ public class FlowHomePageActivity extends FragmentActivity implements
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
+		
+	// PRIVATE
+	//--------------------------------------------------------------------
 	
-//	public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-//		private List<ListFragment> fragments;
-//		private int count;
-//
-//		public AppSectionsPagerAdapter(
-//				android.support.v4.app.FragmentManager fm,
-//				List<ListFragment> fragments, int count) {
-//			super(fm);
-//			this.fragments = fragments;
-//			this.count = count;
-//		}
-//
-//		@Override
-//		public Fragment getItem(int position) {
-//			return this.fragments.get(position);
-//		}
-//
-//		@Override
-//		public int getCount() {
-//			return count;
-//		}
-//
-//		@Override
-//		public CharSequence getPageTitle(int position) {
-//			return "Section " + (position + 1);
-//		}
-//	}
-
-//	public static class ArrayListFragment extends android.support.v4.app.ListFragment {
-//		int mNum;
-//
-//		static ArrayListFragment newInstance(int num) {
-//			Log.d("MUTIBO", "ArrayListFragment::newInstance");
-//			ArrayListFragment f = new ArrayListFragment();
-//			// Supply num input as an argument.
-//			//Bundle args = new Bundle();
-//			//args.putInt("num", num);
-//			//f.setArguments(args);
-//
-//			return f;
-//		}
-//
-//		@Override
-//		public void onCreate(Bundle savedInstanceState) {
-//			Log.d("MUTIBO", "ArrayListFragment::onCreate");
-//			super.onCreate(savedInstanceState);
-//			mNum = getArguments() != null ? getArguments().getInt("num") : 1;
-//		}
-//
-//		/**
-//		 * The Fragment's UI is just a simple text view showing its instance
-//		 * number.
-//		 */
-//		@Override
-//		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//				Bundle savedInstanceState) {
-//			Log.d("MUTIBO", "ArrayListFragment::onCreateView");
-//			View v = inflater.inflate(R.layout.fragment_new_quiz, container,
-//					false);
-//			View tv = v.findViewById(R.id.player_name);
-//			((TextView) tv).setText("Fragment #" + mNum);
-//			Log.d("MUTIBO", "ArrayListFragment::onCreateView returning view");
-//			return v;
-//		}
-//
-//		@Override
-//		public void onActivityCreated(Bundle savedInstanceState) {
-//			super.onActivityCreated(savedInstanceState);
-//			Log.d("MUTIBO", "ArrayListFragment::onActivityCreated");
-//			setListAdapter(new ArrayAdapter<String>(getActivity(),
-//					android.R.layout.simple_list_item_1));
-//			Log.d("MUTIBO","ArrayListFragment::onActivityCreated setListAdapter Called");
-//		}
-//
-//		@Override
-//		public void onListItemClick(ListView l, View v, int position, long id) {
-//			Log.i("FragmentList", "Item clicked: " + id);
-//		}
-//	}
-	// @Override
-	// protected void onSaveInstanceState(Bundle outState) {
-	// super.onSaveInstanceState(outState);
-	// outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
-	// }
+	private void sync() {
+		completedQuizFrag.refresh();
+		newQuizFrag.refresh();
+		createdQuizFrag.refresh();
+	}
+	
 	private void logout(){
 		Log.d("MUTIBO", "FlowHomePageActivity::logout clearing shared Prefs");
-		Utils.getStorage(getApplicationContext()).edit().clear().commit();
-		
+		Utils.clearStorageAndCache(getApplicationContext());
 		Intent intent = new Intent(FlowHomePageActivity.this, MainActivity.class);
 		startActivity(intent);
 	}
@@ -294,6 +217,6 @@ public class FlowHomePageActivity extends FragmentActivity implements
 	
 	private void SetPlayerInfo(String username, int score) {
 		mPlayerName.setText(username);
-		mPlayerScore.setText("(" + Integer.valueOf(score) + ")");
+		mPlayerScore.setText(Integer.toString(score));
 	}
 }
